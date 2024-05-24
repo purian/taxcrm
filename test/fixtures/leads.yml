@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  objectId: MyString
+  Name: MyString
+  Email: MyString
+  PhoneNumber: MyString
+  LeadStatusId_Name: MyString
+  LeadOwnerId_name: MyString
+  IsAccount: false
+
+two:
+  objectId: MyString
+  Name: MyString
+  Email: MyString
+  PhoneNumber: MyString
+  LeadStatusId_Name: MyString
+  LeadOwnerId_name: MyString
+  IsAccount: false

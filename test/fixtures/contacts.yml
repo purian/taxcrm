@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  objectId: MyString
+  Name: MyString
+  Email: MyString
+  PhoneNumber: MyString
+  CellPhone: MyString
+  Position: MyString
+  AccountId_Name: MyString
+  OwnerId_name: MyString
+  AccountId_IsAccount: false
+
+two:
+  objectId: MyString
+  Name: MyString
+  Email: MyString
+  PhoneNumber: MyString
+  CellPhone: MyString
+  Position: MyString
+  AccountId_Name: MyString
+  OwnerId_name: MyString
+  AccountId_IsAccount: false

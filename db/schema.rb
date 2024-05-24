@@ -10,7 +10,59 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_24_162225) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_24_164151) do
+  create_table "clients", force: :cascade do |t|
+    t.string "objectId"
+    t.string "Name"
+    t.string "Email"
+    t.string "PhoneNumber"
+    t.string "CellPhone"
+    t.string "Position"
+    t.string "AccountId_Name"
+    t.string "OwnerId_name"
+    t.boolean "AccountId_IsAccount"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "contacts", force: :cascade do |t|
+    t.string "objectId"
+    t.string "Name"
+    t.string "Email"
+    t.string "PhoneNumber"
+    t.string "CellPhone"
+    t.string "Position"
+    t.string "AccountId_Name"
+    t.string "OwnerId_name"
+    t.boolean "AccountId_IsAccount"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "leads", force: :cascade do |t|
+    t.string "objectId"
+    t.string "Name"
+    t.string "Email"
+    t.string "PhoneNumber"
+    t.string "LeadStatusId_Name"
+    t.string "LeadOwnerId_name"
+    t.boolean "IsAccount"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "referrals", force: :cascade do |t|
+    t.string "objectId"
+    t.string "Name"
+    t.string "PhoneNumber"
+    t.string "OwnerId_name"
+    t.string "City_Name"
+    t.string "StatusLaw_Name"
+    t.string "LinkingFactor"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "sales", force: :cascade do |t|
     t.string "objectId"
     t.string "Name"
