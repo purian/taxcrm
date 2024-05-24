@@ -1,0 +1,9 @@
+<h1>Sales Insights</h1>
+
+<div id="sales-by-status">
+  <%= line_chart Sale.group_by_day(:created_at).count, xtitle: "Date", ytitle: "Sales" %>
+</div>
+
+<div id="sales-by-account">
+  <%= pie_chart Sale.group(:AccountId_Name).count, xtitle: "Account", ytitle: "Sales" %>
+</div>

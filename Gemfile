@@ -71,3 +71,7 @@ end
 
 gem 'httparty'
 gem 'rufus-scheduler'
+
+
+gem 'chartkick'
+gem 'groupdate'
