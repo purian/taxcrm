@@ -1,9 +1,21 @@
-<h1>Sales Insights</h1>
+<h1>Data Insights</h1>
 
 <div id="sales-by-status">
   <%= line_chart Sale.group_by_day(:created_at).count, xtitle: "Date", ytitle: "Sales" %>
 </div>
 
-<div id="sales-by-account">
-  <%= pie_chart Sale.group(:AccountId_Name).count, xtitle: "Account", ytitle: "Sales" %>
+<div id="clients-by-account">
+  <%= pie_chart Client.group(:AccountId_Name).count, xtitle: "Account", ytitle: "Clients" %>
+</div>
+
+<div id="contacts-by-owner">
+  <%= bar_chart Contact.group(:OwnerId_name).count, xtitle: "Owner", ytitle: "Contacts" %>
+</div>
+
+<div id="leads-by-status">
+  <%= column_chart Lead.group(:LeadStatusId_Name).count, xtitle: "Status", ytitle: "Leads" %>
+</div>
+
+<div id="referrals-by-status">
+  <%= line_chart Referral.group_by_day(:created_at).count, xtitle: "Date", ytitle: "Referrals" %>
 </div>
