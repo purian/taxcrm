@@ -20,6 +20,9 @@ class FetchSalesDataService
 
   def initialize
     @last_fetched_at = Sale.maximum(:updated_at) || Time.at(0)
+    email = 'benamram119@walla.com'
+    password = 'Gg198666'
+    @token = AuthenticationService.fetch_token(email, password)
   end
 
   def call
@@ -52,7 +55,7 @@ class FetchSalesDataService
       _JavaScriptKey: "6ee213f7b4e169caa819715ee046cded",
       _ClientVersion: "js1.10.1",
       _InstallationId: "05469a40-8496-73cb-2384-684469410ff2",
-      _SessionToken: "r:a66173fe8b7b9916801b9253e07fafab"
+      _SessionToken: @token
     }
   end
 

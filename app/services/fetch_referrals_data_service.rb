@@ -1,7 +1,7 @@
 require 'httparty'
 
 class FetchReferralsDataService
-  BASE_URL = 'https://api-4.mbapps.co.il/parse/classes/Lawyers'
+  BASE_URL = 'https://api-1.mbapps.co.il/parse/classes/Lawyers'
   HEADERS = {
     'accept' => '*/*',
     'accept-language' => 'en-US,en;q=0.9,he;q=0.8',
@@ -20,6 +20,9 @@ class FetchReferralsDataService
 
   def initialize
     @last_fetched_at = Referral.maximum(:updated_at) || Time.at(0)
+    email = 'benamram119@walla.com'
+    password = 'Gg198666'
+    @token = AuthenticationService.fetch_token(email, password)
   end
 
   def call
@@ -47,11 +50,11 @@ class FetchReferralsDataService
       limit: 100,
       skip: skip,
       _method: "GET",
-      _ApplicationId: "aaaaaaae3aac375841ec08b905439c3d",
+      _ApplicationId: "aaaaaaae3aac375841ec08b905439c3fa4316c3d",
       _JavaScriptKey: "6ee213f7b4e169caa819715ee046cded",
       _ClientVersion: "js1.10.1",
       _InstallationId: "05469a40-8496-73cb-2384-684469410ff2",
-      _SessionToken: "r:a66173fe8b7b9916801b9253e07fafab"
+      _SessionToken: @token
     }
   end
 

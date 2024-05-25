@@ -19,17 +19,19 @@ class AuthenticationService
     'upgrade-insecure-requests' => '1',
     'user-agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
   }
-  PAYLOAD = {
-    'username' => 'benamram119%40walla.com',
-    'encrypt_password' => 'YEfTyVbez8yZax7loL4njuLubHtUK%2B%2BoUYQ%2BQI%2BWOp8%3D',
-    'encrypt__id' => '6650cf6b3c596ba667ed4c2f',
-    'isAdmin' => true,
-    'applicationId' => '5a8ebcecca2341001a722188',
-    'requestFromDiffDomain' => 1
-  }
 
-  def self.fetch_token
-    response = HTTParty.post(LOGIN_URL, headers: HEADERS, body: PAYLOAD)
+  def self.fetch_token(email, password)
+    public_key_data = PublicKeyService.fetch_public_key
+    encrypted_password = EncryptionService.encrypt_password(password, public_key_data[:public_key])
+    response = HTTParty.post(LOGIN_URL, headers: HEADERS, body: {
+      username: email,
+      encrypt_password: encrypted_password,
+      encrypt__id: public_key_data[:id],
+      isAdmin: true,
+      applicationId: '5a8ebcecca2341001a722188',
+      requestFromDiffDomain: 1
+    }.to_query)
+    
     document = Nokogiri::HTML(response.body)
     script_content = document.at('script:contains("Simbla.User.become")').text
     token = script_content.match(/Simbla\.User\.become\("([^"]+)"\)/)[1]
