@@ -1,7 +1,5 @@
-require 'httparty'
-
 class FetchReferralsDataService
-  BASE_URL = 'https://api-1.mbapps.co.il/parse/classes/Lawyers'
+  BASE_URL = 'https://api-4.mbapps.co.il/parse/classes/Lawyers'
   HEADERS = {
     'accept' => '*/*',
     'accept-language' => 'en-US,en;q=0.9,he;q=0.8',
@@ -33,19 +31,27 @@ class FetchReferralsDataService
 
   def fetch_data
     skip = 0
+    records = []
     loop do
-      response = HTTParty.post(BASE_URL, headers: HEADERS, body: request_body(skip).to_json)
+      response = HTTParty.post(BASE_URL, headers: request_headers, body: request_body(skip).to_json)
       results = response.parsed_response['results']
       break if results.empty?
 
-      results.each { |record| save_record(record) }
+      results.each { |record| records << prepare_record(record) }
       skip += 100
       sleep 2
     end
+
+    Referral.upsert_all(records, unique_by: :objectId) unless records.empty?
   end
+
+  def request_headers
+    HEADERS.merge('X-Parse-Session-Token' => @token)
+  end
+
   def request_body(skip)
     {
-      where: { IsAccount: { "$ne": false }, updatedAt: { "$gt": @last_fetched_at.iso8601 } },
+      where: { IsAccount: { "$ne": false } },
       keys: "Name,PhoneNumber,OwnerId.name,City.Name,StatusLaw.Name,LinkingFactor",
       limit: 100,
       skip: skip,
@@ -58,15 +64,17 @@ class FetchReferralsDataService
     }
   end
 
-  def save_record(record)
-    Referral.create!(
+  def prepare_record(record)
+    {
       objectId: record['objectId'],
       Name: record['Name'],
       PhoneNumber: record['PhoneNumber'],
       OwnerId_name: record.dig('OwnerId', 'name'),
       City_Name: record.dig('City', 'Name'),
       StatusLaw_Name: record.dig('StatusLaw', 'Name'),
-      LinkingFactor: record['LinkingFactor']
-    )
+      LinkingFactor: record['LinkingFactor'],
+      created_at: record['createdAt'],
+      updated_at: record['updatedAt']
+    }
   end
 end

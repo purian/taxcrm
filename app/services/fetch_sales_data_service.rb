@@ -1,5 +1,3 @@
-require 'httparty'
-
 class FetchSalesDataService
   BASE_URL = 'https://api-4.mbapps.co.il/parse/classes/Sales'
   HEADERS = {
@@ -33,20 +31,27 @@ class FetchSalesDataService
 
   def fetch_data
     skip = 0
+    records = []
     loop do
-      response = HTTParty.post(BASE_URL, headers: HEADERS, body: request_body(skip).to_json)
+      response = HTTParty.post(BASE_URL, headers: request_headers, body: request_body(skip).to_json)
       results = response.parsed_response['results']
       break if results.empty?
 
-      results.each { |record| save_record(record) }
+      results.each { |record| records << prepare_record(record) }
       skip += 100
       sleep 2
     end
+
+    Sale.upsert_all(records, unique_by: :objectId) unless records.empty?
+  end
+
+  def request_headers
+    HEADERS.merge('X-Parse-Session-Token' => @token)
   end
 
   def request_body(skip)
     {
-      where: { updatedAt: { "$gt": @last_fetched_at.iso8601 } },
+      where: {},
       keys: "Name,AccNumber,AccountId.Name,AccountId.CompanyId,AccountId.PhoneNumber,SaleStatusId.Name,CAPStatus.Name,PraiseTax,BookkeepingDate,AccountId.IsAccount",
       limit: 100,
       skip: skip,
@@ -59,8 +64,12 @@ class FetchSalesDataService
     }
   end
 
-  def save_record(record)
-    Sale.create!(
+  def parse_date(date_hash)
+    DateTime.parse(date_hash['iso']) if date_hash
+  end
+
+  def prepare_record(record)
+    {
       objectId: record['objectId'],
       Name: record['Name'],
       AccNumber: record['AccNumber'],
@@ -70,8 +79,10 @@ class FetchSalesDataService
       SaleStatusId_Name: record.dig('SaleStatusId', 'Name'),
       CAPStatus_Name: record.dig('CAPStatus', 'Name'),
       PraiseTax: record['PraiseTax'],
-      BookkeepingDate: record['BookkeepingDate'],
-      AccountId_IsAccount: record.dig('AccountId', 'IsAccount')
-    )
+      BookkeepingDate: parse_date(record['BookkeepingDate']),
+      AccountId_IsAccount: record.dig('AccountId', 'IsAccount'),
+      created_at: DateTime.parse(record['createdAt']),
+      updated_at: DateTime.parse(record['updatedAt'])
+    }
   end
 end

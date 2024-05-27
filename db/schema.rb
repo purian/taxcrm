@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_24_164151) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_25_205710) do
   create_table "clients", force: :cascade do |t|
     t.string "objectId"
     t.string "Name"
@@ -23,6 +23,14 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_24_164151) do
     t.boolean "AccountId_IsAccount"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "Number2"
+    t.string "Number"
+    t.string "CompanyId"
+    t.string "LeadOwnerId_name"
+    t.datetime "DateBecomeCustomer"
+    t.text "Documentation"
+    t.boolean "IsAccount"
+    t.index ["objectId"], name: "index_clients_on_objectId", unique: true
   end
 
   create_table "contacts", force: :cascade do |t|
@@ -37,6 +45,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_24_164151) do
     t.boolean "AccountId_IsAccount"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["objectId"], name: "index_contacts_on_objectId", unique: true
   end
 
   create_table "leads", force: :cascade do |t|
@@ -49,6 +58,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_24_164151) do
     t.boolean "IsAccount"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "CompanyId"
+    t.string "Number"
+    t.text "Documentation"
+    t.text "SourceList"
+    t.string "PraiseTax"
+    t.string "Lawyers_Name"
+    t.index ["objectId"], name: "index_leads_on_objectId", unique: true
   end
 
   create_table "referrals", force: :cascade do |t|
@@ -61,6 +77,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_24_164151) do
     t.string "LinkingFactor"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["objectId"], name: "index_referrals_on_objectId", unique: true
   end
 
   create_table "sales", force: :cascade do |t|
@@ -77,6 +94,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_24_164151) do
     t.boolean "AccountId_IsAccount"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["objectId"], name: "index_sales_on_objectId", unique: true
   end
 
 end

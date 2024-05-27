@@ -1,0 +1,29 @@
+<!-- app/views/sales/index.html.erb -->
+<h1>Sales Insights</h1>
+
+<%= form_with url: sales_index_path, method: :get, local: true do %>
+  <div>
+    <%= label_tag :year, 'Select Year:' %>
+    <%= select_tag :year, options_for_select((2010..Date.current.year).to_a.reverse, params[:year]), onchange: 'this.form.submit();' %>
+  </div>
+<% end %>
+
+<div id="total-sales-over-time">
+  <h2>Total Sales Over Time</h2>
+  <%= line_chart @total_sales_over_time %>
+</div>
+
+<div id="sales-amount-over-time">
+  <h2>Sales Amount Over Time</h2>
+  <%= line_chart @sales_amount_over_time %>
+</div>
+
+<div id="sales-distribution-by-status">
+  <h2>Sales Distribution by Status</h2>
+  <%= pie_chart @sales_distribution_by_status %>
+</div>
+
+<div id="average-sales-amount-by-month">
+  <h2>Average Sales Amount by Month</h2>
+  <%= column_chart @average_sales_amount_by_month %>
+</div>

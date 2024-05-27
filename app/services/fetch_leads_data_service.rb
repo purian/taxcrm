@@ -1,5 +1,3 @@
-require 'httparty'
-
 class FetchLeadsDataService
   BASE_URL = 'https://api-4.mbapps.co.il/parse/classes/Accounts'
   HEADERS = {
@@ -33,20 +31,27 @@ class FetchLeadsDataService
 
   def fetch_data
     skip = 0
+    records = []
     loop do
-      response = HTTParty.post(BASE_URL, headers: HEADERS, body: request_body(skip).to_json)
+      response = HTTParty.post(BASE_URL, headers: request_headers, body: request_body(skip).to_json)
       results = response.parsed_response['results']
       break if results.empty?
 
-      results.each { |record| save_record(record) }
+      results.each { |record| records << prepare_record(record) }
       skip += 100
       sleep 2
     end
+
+    Lead.upsert_all(records, unique_by: :objectId) unless records.empty?
+  end
+
+  def request_headers
+    HEADERS.merge('X-Parse-Session-Token' => @token)
   end
 
   def request_body(skip)
     {
-      where: { IsAccount: false, updatedAt: { "$gt": @last_fetched_at.iso8601 } },
+      where: { IsAccount: false },
       keys: "createdAt,CompanyId,LeadStatusId.Name,Number,Documentation,SourceList,Name,Email,PhoneNumber,LeadOwnerId.name,PraiseTax,Lawyers.Name,IsAccount",
       limit: 100,
       skip: skip,
@@ -59,15 +64,23 @@ class FetchLeadsDataService
     }
   end
 
-  def save_record(record)
-    Lead.create!(
+  def prepare_record(record)
+    {
       objectId: record['objectId'],
       Name: record['Name'],
       Email: record['Email'],
       PhoneNumber: record['PhoneNumber'],
+      CompanyId: record['CompanyId'],
       LeadStatusId_Name: record.dig('LeadStatusId', 'Name'),
+      Number: record['Number'],
+      Documentation: record['Documentation'],
+      SourceList: record['SourceList'],
       LeadOwnerId_name: record.dig('LeadOwnerId', 'name'),
-      IsAccount: record['IsAccount']
-    )
+      PraiseTax: record['PraiseTax'],
+      Lawyers_Name: record.dig('Lawyers', 'Name'),
+      IsAccount: record['IsAccount'],
+      created_at: record['createdAt'],
+      updated_at: record['updatedAt']
+    }
   end
 end

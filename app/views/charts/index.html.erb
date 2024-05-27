@@ -1,5 +1,33 @@
 <h1>Data Insights</h1>
 
+
+<h1>Sales Insights</h1>
+
+<div id="total-sales-over-time">
+  <h2>Total Sales Over Time</h2>
+  <%= line_chart Sale.group_by_day(:created_at).count %>
+</div>
+
+<div id="sales-amount-over-time">
+  <h2>Sales Amount Over Time</h2>
+  <%= line_chart Sale.group_by_day(:created_at).sum(:PraiseTax) %>
+</div>
+
+<div id="sales-distribution-by-status">
+  <h2>Sales Distribution by Status</h2>
+  <%= pie_chart Sale.group(:SaleStatusId_Name).count %>
+</div>
+
+<div id="average-sales-amount-by-month">
+  <h2>Average Sales Amount by Month</h2>
+  <%= column_chart Sale.group_by_month(:created_at).average(:PraiseTax) %>
+</div>
+
+<div id="sales-by-account">
+  <h2>Sales by Account</h2>
+  <%= bar_chart Sale.group(:AccountId_Name).count %>
+</div>
+
 <div id="sales-by-status">
   <%= line_chart Sale.group_by_day(:created_at).count, xtitle: "Date", ytitle: "Sales" %>
 </div>
@@ -19,3 +47,5 @@
 <div id="referrals-by-status">
   <%= line_chart Referral.group_by_day(:created_at).count, xtitle: "Date", ytitle: "Referrals" %>
 </div>
+
+

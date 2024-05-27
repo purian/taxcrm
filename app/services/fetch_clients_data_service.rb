@@ -1,5 +1,3 @@
-require 'httparty'
-
 class FetchClientsDataService
   BASE_URL = 'https://api-4.mbapps.co.il/parse/classes/Accounts'
   HEADERS = {
@@ -33,20 +31,27 @@ class FetchClientsDataService
 
   def fetch_data
     skip = 0
+    records = []
     loop do
-      response = HTTParty.post(BASE_URL, headers: HEADERS, body: request_body(skip).to_json)
+      response = HTTParty.post(BASE_URL, headers: request_headers, body: request_body(skip).to_json)
       results = response.parsed_response['results']
       break if results.empty?
 
-      results.each { |record| save_record(record) }
+      results.each { |record| records << prepare_record(record) }
       skip += 100
       sleep 2
     end
+
+    Client.upsert_all(records, unique_by: :objectId) unless records.empty?
+  end
+
+  def request_headers
+    HEADERS.merge('X-Parse-Session-Token' => @token)
   end
 
   def request_body(skip)
     {
-      where: { IsAccount: { "$ne": false }, updatedAt: { "$gt": @last_fetched_at.iso8601 } },
+      where: { IsAccount: { "$ne": false } },
       keys: "Number2,Number,Name,CompanyId,PhoneNumber,Email,OwnerId.name,createdAt,LeadOwnerId.name,DateBecomeCustomer,objectId,Documentation,IsAccount",
       limit: 100,
       skip: skip,
@@ -59,17 +64,22 @@ class FetchClientsDataService
     }
   end
 
-  def save_record(record)
-    Client.create!(
+  def prepare_record(record)
+    {
       objectId: record['objectId'],
       Name: record['Name'],
-      Email: record['Email'],
+      Number2: record['Number2'],
+      Number: record['Number'],
+      CompanyId: record['CompanyId'],
       PhoneNumber: record['PhoneNumber'],
-      CellPhone: record['CellPhone'],
-      Position: record['Position'],
-      AccountId_Name: record.dig('AccountId', 'Name'),
+      Email: record['Email'],
       OwnerId_name: record.dig('OwnerId', 'name'),
-      AccountId_IsAccount: record.dig('AccountId', 'IsAccount')
-      )
+      LeadOwnerId_name: record.dig('LeadOwnerId', 'name'),
+      DateBecomeCustomer: record.dig('DateBecomeCustomer', 'iso'),
+      Documentation: record['Documentation'],
+      IsAccount: record['IsAccount'],
+      created_at: record['createdAt'],
+      updated_at: record['updatedAt']
+    }
   end
 end
