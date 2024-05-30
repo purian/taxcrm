@@ -1,3 +1,6 @@
+require 'httparty'
+require 'cgi'
+
 class FetchSalesDataService
   BASE_URL = 'https://api-4.mbapps.co.il/parse/classes/Sales'
   HEADERS = {
@@ -64,25 +67,29 @@ class FetchSalesDataService
     }
   end
 
-  def parse_date(date_hash)
-    DateTime.parse(date_hash['iso']) if date_hash
-  end
-
   def prepare_record(record)
     {
       objectId: record['objectId'],
-      Name: record['Name'],
-      AccNumber: record['AccNumber'],
-      AccountId_Name: record.dig('AccountId', 'Name'),
-      AccountId_CompanyId: record.dig('AccountId', 'CompanyId'),
-      AccountId_PhoneNumber: record.dig('AccountId', 'PhoneNumber'),
-      SaleStatusId_Name: record.dig('SaleStatusId', 'Name'),
-      CAPStatus_Name: record.dig('CAPStatus', 'Name'),
-      PraiseTax: record['PraiseTax'],
+      Name: decode_html_entities(record['Name']),
+      AccNumber: decode_html_entities(record['AccNumber']),
+      AccountId_Name: decode_html_entities(record.dig('AccountId', 'Name')),
+      AccountId_CompanyId: decode_html_entities(record.dig('AccountId', 'CompanyId')),
+      AccountId_PhoneNumber: decode_html_entities(record.dig('AccountId', 'PhoneNumber')),
+      SaleStatusId_Name: decode_html_entities(record.dig('SaleStatusId', 'Name')),
+      CAPStatus_Name: decode_html_entities(record.dig('CAPStatus', 'Name')),
+      PraiseTax: decode_html_entities(record['PraiseTax']),
       BookkeepingDate: parse_date(record['BookkeepingDate']),
       AccountId_IsAccount: record.dig('AccountId', 'IsAccount'),
       created_at: DateTime.parse(record['createdAt']),
       updated_at: DateTime.parse(record['updatedAt'])
     }
+  end
+
+  def parse_date(date_hash)
+    DateTime.parse(date_hash['iso']) if date_hash
+  end
+
+  def decode_html_entities(text)
+    CGI.unescapeHTML(text) if text
   end
 end
