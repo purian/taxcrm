@@ -1,3 +1,6 @@
+require 'httparty'
+require 'cgi'
+
 class FetchLeadsDataService
   BASE_URL = 'https://api-4.mbapps.co.il/parse/classes/Accounts'
   HEADERS = {
@@ -67,20 +70,24 @@ class FetchLeadsDataService
   def prepare_record(record)
     {
       objectId: record['objectId'],
-      Name: record['Name'],
-      Email: record['Email'],
-      PhoneNumber: record['PhoneNumber'],
-      CompanyId: record['CompanyId'],
-      LeadStatusId_Name: record.dig('LeadStatusId', 'Name'),
+      Name: decode_html_entities(record['Name']),
+      Email: decode_html_entities(record['Email']),
+      PhoneNumber: decode_html_entities(record['PhoneNumber']),
+      CompanyId: decode_html_entities(record['CompanyId']),
+      LeadStatusId_Name: decode_html_entities(record.dig('LeadStatusId', 'Name')),
       Number: record['Number'],
-      Documentation: record['Documentation'],
-      SourceList: record['SourceList'],
-      LeadOwnerId_name: record.dig('LeadOwnerId', 'name'),
-      PraiseTax: record['PraiseTax'],
-      Lawyers_Name: record.dig('Lawyers', 'Name'),
+      Documentation: decode_html_entities(record['Documentation']),
+      SourceList: decode_html_entities(record['SourceList']),
+      LeadOwnerId_name: decode_html_entities(record.dig('LeadOwnerId', 'name')),
+      PraiseTax: decode_html_entities(record['PraiseTax']),
+      Lawyers_Name: decode_html_entities(record.dig('Lawyers', 'Name')),
       IsAccount: record['IsAccount'],
-      created_at: record['createdAt'],
-      updated_at: record['updatedAt']
+      created_at: DateTime.parse(record['createdAt']),
+      updated_at: DateTime.parse(record['updatedAt'])
     }
+  end
+
+  def decode_html_entities(text)
+    CGI.unescapeHTML(text) if text
   end
 end
