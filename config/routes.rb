@@ -1,5 +1,9 @@
 Rails.application.routes.draw do
-  root to: 'charts#index'
+  root 'leads#index'
+  get 'leads', to: 'leads#index'
+  get 'leads/filter', to: 'leads#filter'
+  get 'leads/details', to: 'leads#details'
+  
   get 'charts/index'
   get 'charts', to: 'charts#index'
   get 'sales/index'

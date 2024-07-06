@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>TaxCrm</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>   
+  </head>
+
+  <body>
+    <h1>Filter Leads</h1>
+    <div>
+      <label for="lead_owner">Lead Owner:</label>
+      <select id="lead_owner">
+        <option value="">Select Lead Owner</option>
+        <% @lead_owners.each do |owner| %>
+          <option value="<%= owner %>"><%= owner %> (<%= Lead.where(LeadOwnerId_name: owner).count %>)</option>
+        <% end %>
+      </select>
+    </div>
+
+    <div>
+      <label for="lawyer">Lawyer:</label>
+      <select id="lawyer">
+        <option value="">Select Lawyer</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="year">Year:</label>
+      <select id="year">
+        <% (2020..Date.today.year).each do |year| %>
+          <option value="<%= year %>"><%= year %></option>
+        <% end %>
+      </select>
+    </div>
+
+    <div id="chart-container" style="height: 300px;"></div>
+
+    <div id="details-container"></div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        const leadOwnerSelect = document.getElementById("lead_owner");
+        const lawyerSelect = document.getElementById("lawyer");
+
+        function fetchLawyers(leadOwner) {
+          if (leadOwner) {
+            fetch(`/leads/filter?lead_owner=${leadOwner}`)
+              .then(response => response.json())
+              .then(data => {
+                lawyerSelect.innerHTML = "<option value=''>Select Lawyer</option>";
+                data.lawyers.forEach(lawyer => {
+                  const option = document.createElement("option");
+                  option.value = lawyer;
+                  option.text = `${lawyer} (${data.lawyers.filter(l => l === lawyer).length})`;
+                  lawyerSelect.appendChild(option);
+                });
+              });
+          }
+        }
+
+        // Fetch lawyers if a lead owner is already selected on initial load
+        if (leadOwnerSelect.value) {
+          fetchLawyers(leadOwnerSelect.value);
+        }
+
+        leadOwnerSelect.addEventListener("change", function() {
+          fetchLawyers(this.value);
+        });
+
+        document.getElementById("year").addEventListener("change", updateChart);
+
+        function updateChart() {
+          const leadOwner = leadOwnerSelect.value;
+          const lawyer = lawyerSelect.value;
+          const year = document.getElementById("year").value;
+
+          if (leadOwner && lawyer && year) {
+            fetch(`/leads/details?lead_owner=${leadOwner}&lawyer=${lawyer}&year=${year}`)
+              .then(response => response.json())
+              .then(data => {
+                new Chartkick.LineChart("chart-container", data.leads);
+              });
+          }
+        }
+
+        document.getElementById("chart-container").addEventListener("click", function(event) {
+          if (event.target.nodeName === "path") {
+            const weekStart = event.target.getAttribute("data-week-start");
+            const status = event.target.getAttribute("data-status");
+            fetch(`/leads/show_leads?week_start=${weekStart}&status=${status}`)
+              .then(response => response.json())
+              .then(data => {
+                const detailsContainer = document.getElementById("details-container");
+                detailsContainer.innerHTML = "<table><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone Number</th><th>Lead Status</th><th>Lead Owner</th><th>Documentation</th></tr>";
+                data.leads.forEach(lead => {
+                  const row = document.createElement("tr");
+                  row.innerHTML = `<td>${lead.id}</td><td>${lead.Name}</td><td>${lead.Email}</td><td>${lead.PhoneNumber}</td><td>${lead.LeadStatusId_Name}</td><td>${lead.LeadOwnerId_name}</td><td>${lead.Documentation}</td>`;
+                  detailsContainer.querySelector("table").appendChild(row);
+                });
+              });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

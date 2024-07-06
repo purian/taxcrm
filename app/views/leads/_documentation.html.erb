@@ -1,0 +1,14 @@
+<% documentation.each do |doc| %>
+  <table>
+    <tr>
+      <th>Date Time</th>
+      <th>Description</th>
+    </tr>
+    <% doc.each do |entry| %>
+      <tr>
+        <td><%= entry[:date_time] %></td>
+        <td><%= entry[:description] %></td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>
