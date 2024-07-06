@@ -23,4 +23,5 @@
 #  IsAccount           :boolean
 #
 class Client < ApplicationRecord
+  include DecodeHtmlEntities
 end

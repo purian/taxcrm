@@ -1,3 +1,6 @@
+require 'httparty'
+require 'cgi'
+
 class FetchReferralsDataService
   BASE_URL = 'https://api-4.mbapps.co.il/parse/classes/Lawyers'
   HEADERS = {
@@ -67,14 +70,18 @@ class FetchReferralsDataService
   def prepare_record(record)
     {
       objectId: record['objectId'],
-      Name: record['Name'],
-      PhoneNumber: record['PhoneNumber'],
-      OwnerId_name: record.dig('OwnerId', 'name'),
-      City_Name: record.dig('City', 'Name'),
-      StatusLaw_Name: record.dig('StatusLaw', 'Name'),
-      LinkingFactor: record['LinkingFactor'],
-      created_at: record['createdAt'],
-      updated_at: record['updatedAt']
+      Name: decode_html_entities(record['Name']),
+      PhoneNumber: decode_html_entities(record['PhoneNumber']),
+      OwnerId_name: decode_html_entities(record.dig('OwnerId', 'name')),
+      City_Name: decode_html_entities(record.dig('City', 'Name')),
+      StatusLaw_Name: decode_html_entities(record.dig('StatusLaw', 'Name')),
+      LinkingFactor: decode_html_entities(record['LinkingFactor']),
+      created_at: DateTime.parse(record['createdAt']),
+      updated_at: DateTime.parse(record['updatedAt'])
     }
+  end
+
+  def decode_html_entities(text)
+    CGI.unescapeHTML(text) if text
   end
 end

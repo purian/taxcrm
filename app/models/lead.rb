@@ -20,4 +20,5 @@
 #  Lawyers_Name      :string
 #
 class Lead < ApplicationRecord
+  include DecodeHtmlEntities
 end

@@ -14,4 +14,5 @@
 #  updated_at     :datetime         not null
 #
 class Referral < ApplicationRecord
+  include DecodeHtmlEntities
 end

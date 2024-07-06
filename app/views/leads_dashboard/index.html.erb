@@ -1,0 +1,38 @@
+<h1>Leads Dashboard</h1>
+
+<%= form_with url: leads_dashboard_path, method: :get, local: true do %>
+  <div>
+    <%= label_tag :year, 'Select Year:' %>
+    <%= select_tag :year, options_for_select((2010..Date.current.year).to_a.reverse, params[:year]), onchange: 'this.form.submit();' %>
+  </div>
+<% end %>
+
+<div id="total-leads-over-time">
+  <h2>Total Leads Over Time</h2>
+  <%= line_chart @total_leads_over_time %>
+</div>
+
+<div id="leads-by-status">
+  <h2>Leads by Status</h2>
+  <%= pie_chart @leads_by_status %>
+</div>
+
+<div id="lead-conversion-rate">
+  <h2>Lead Conversion Rate</h2>
+  <p><%= @lead_conversion_rate %> %</p>
+</div>
+
+<div id="leads-by-source">
+  <h2>Leads by Source</h2>
+  <%= bar_chart @leads_by_source %>
+</div>
+
+<div id="average-time-to-conversion">
+  <h2>Average Time to Conversion</h2>
+  <p><%= @average_time_to_conversion %> days</p>
+</div>
+
+<div id="top-lead-owners">
+  <h2>Top Lead Owners</h2>
+  <%= bar_chart @top_lead_owners %>
+</div>

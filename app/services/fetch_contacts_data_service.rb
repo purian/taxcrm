@@ -1,3 +1,6 @@
+require 'httparty'
+require 'cgi'
+
 class FetchContactsDataService
   BASE_URL = 'https://api-4.mbapps.co.il/parse/classes/Contacts'
   HEADERS = {
@@ -67,16 +70,20 @@ class FetchContactsDataService
   def prepare_record(record)
     {
       objectId: record['objectId'],
-      Name: record['Name'],
-      Email: record['Email'],
-      PhoneNumber: record['PhoneNumber'],
-      CellPhone: record['CellPhone'],
-      Position: record['Position'],
-      AccountId_Name: record.dig('AccountId', 'Name'),
-      OwnerId_name: record.dig('OwnerId', 'name'),
+      Name: decode_html_entities(record['Name']),
+      Email: decode_html_entities(record['Email']),
+      PhoneNumber: decode_html_entities(record['PhoneNumber']),
+      CellPhone: decode_html_entities(record['CellPhone']),
+      Position: decode_html_entities(record['Position']),
+      AccountId_Name: decode_html_entities(record.dig('AccountId', 'Name')),
+      OwnerId_name: decode_html_entities(record.dig('OwnerId', 'name')),
       AccountId_IsAccount: record.dig('AccountId', 'IsAccount'),
-      created_at: record['createdAt'],
-      updated_at: record['updatedAt']
+      created_at: DateTime.parse(record['createdAt']),
+      updated_at: DateTime.parse(record['updatedAt'])
     }
+  end
+
+  def decode_html_entities(text)
+    CGI.unescapeHTML(text) if text
   end
 end

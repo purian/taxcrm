@@ -16,4 +16,5 @@
 #  updated_at          :datetime         not null
 #
 class Contact < ApplicationRecord
+  include DecodeHtmlEntities
 end

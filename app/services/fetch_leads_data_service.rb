@@ -19,8 +19,7 @@ class FetchLeadsDataService
     'user-agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
   }
 
-  def initialize
-    @last_fetched_at = Lead.maximum(:updated_at) || Time.at(0)
+  def initialize    
     email = 'benamram119@walla.com'
     password = 'Gg198666'
     @token = AuthenticationService.fetch_token(email, password)
@@ -87,7 +86,7 @@ class FetchLeadsDataService
     }
   end
 
-  def decode_html_entities(text)
-    CGI.unescapeHTML(text) if text
+  def decode_html_entities(text)    
+    CGI.unescapeHTML(text.to_s) if text
   end
 end

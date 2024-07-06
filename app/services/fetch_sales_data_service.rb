@@ -1,5 +1,4 @@
-require 'httparty'
-require 'cgi'
+require 'cgi' # Required for decoding HTML entities
 
 class FetchSalesDataService
   BASE_URL = 'https://api-4.mbapps.co.il/parse/classes/Sales'
@@ -67,6 +66,14 @@ class FetchSalesDataService
     }
   end
 
+  def parse_date(date_hash)
+    DateTime.parse(date_hash['iso']) if date_hash
+  end
+
+  def decode_html_entities(value)
+    CGI.unescapeHTML(value.to_s)
+  end
+
   def prepare_record(record)
     {
       objectId: record['objectId'],
@@ -77,19 +84,12 @@ class FetchSalesDataService
       AccountId_PhoneNumber: decode_html_entities(record.dig('AccountId', 'PhoneNumber')),
       SaleStatusId_Name: decode_html_entities(record.dig('SaleStatusId', 'Name')),
       CAPStatus_Name: decode_html_entities(record.dig('CAPStatus', 'Name')),
-      PraiseTax: decode_html_entities(record['PraiseTax']),
+      PraiseTax: record['PraiseTax'],
+      PraiseTaxNumber: record['PraiseTax'].to_i,
       BookkeepingDate: parse_date(record['BookkeepingDate']),
       AccountId_IsAccount: record.dig('AccountId', 'IsAccount'),
       created_at: DateTime.parse(record['createdAt']),
       updated_at: DateTime.parse(record['updatedAt'])
     }
-  end
-
-  def parse_date(date_hash)
-    DateTime.parse(date_hash['iso']) if date_hash
-  end
-
-  def decode_html_entities(text)
-    CGI.unescapeHTML(text) if text
   end
 end
