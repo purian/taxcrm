@@ -25,7 +25,7 @@
 
 <div id="leads-by-status">
   <h2>Leads by Status</h2>
-  <%= pie_chart @leads_by_status %>
+  <%= bar_chart @leads_by_status %>
 </div>
 
 
@@ -33,3 +33,10 @@
   <h2>Top Lead Owners</h2>
   <%= bar_chart @top_lead_owners %>
 </div>
+
+<% @leads_chart_data.each do |owner, status| %>
+  <h2>Lead Owner: <%= owner %></h2>
+
+  <%= bar_chart status.map { |status, count| [status, count] }, library: { title: { text: "Statuses for #{owner}" } } %>
+
+<% end %>

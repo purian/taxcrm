@@ -76,4 +76,5 @@ gem 'rufus-scheduler'
 
 
 gem 'chartkick'
+gem 'chart-js-rails'
 gem 'groupdate'
