@@ -23,18 +23,9 @@
     </div>
 
     <div>
-      <label for="lawyer">Lawyer:</label>
+      <label for="lawyer">Lawyer and Year:</label>
       <select id="lawyer">
-        <option value="">Select Lawyer</option>
-      </select>
-    </div>
-
-    <div>
-      <label for="year">Year:</label>
-      <select id="year">
-        <% (2020..Date.today.year).each do |year| %>
-          <option value="<%= year %>"><%= year %></option>
-        <% end %>
+        <option value="">Select Lawyer and Year</option>
       </select>
     </div>
 
@@ -52,13 +43,15 @@
             fetch(`/leads/filter?lead_owner=${leadOwner}`)
               .then(response => response.json())
               .then(data => {
-                lawyerSelect.innerHTML = "<option value=''>Select Lawyer</option>";
-                data.lawyers.forEach(lawyer => {
-                  const option = document.createElement("option");
-                  option.value = lawyer;
-                  option.text = `${lawyer} (${data.lawyers.filter(l => l === lawyer).length})`;
-                  lawyerSelect.appendChild(option);
-                });
+                lawyerSelect.innerHTML = "<option value=''>Select Lawyer and Year</option>";
+                for (const [lawyer, years] of Object.entries(data.lawyers)) {
+                  for (const [year, count] of Object.entries(years)) {
+                    const option = document.createElement("option");
+                    option.value = `${lawyer}-${year}`;
+                    option.text = `${lawyer} (${year} - ${count} records)`;
+                    lawyerSelect.appendChild(option);
+                  }
+                }
               });
           }
         }
@@ -72,13 +65,14 @@
           fetchLawyers(this.value);
         });
 
-        document.getElementById("year").addEventListener("change", updateChart);
+        lawyerSelect.addEventListener("change", updateChart);
 
         function updateChart() {
           const leadOwner = leadOwnerSelect.value;
-          const lawyer = lawyerSelect.value;
-          const year = document.getElementById("year").value;
+          const selectedLawyerValue = lawyerSelect.value;
+          if (!selectedLawyerValue) return;
 
+          const [lawyer, year] = selectedLawyerValue.split("-");
           if (leadOwner && lawyer && year) {
             fetch(`/leads/details?lead_owner=${leadOwner}&lawyer=${lawyer}&year=${year}`)
               .then(response => response.json())

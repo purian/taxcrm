@@ -5,8 +5,16 @@ class LeadsController < ApplicationController
 
   def filter
     lead_owner = params[:lead_owner]
-    @lawyers = Lead.where(LeadOwnerId_name: lead_owner).distinct.pluck(:Lawyers_Name)
-    render json: { lawyers: @lawyers }
+    lawyers = Lead.where(LeadOwnerId_name: lead_owner)
+                  .select(:Lawyers_Name, :created_at)
+                  .group_by { |lead| lead.Lawyers_Name }
+                  .transform_values { |leads| leads.group_by { |lead| lead.created_at.year } }
+
+    lawyers_with_counts = lawyers.transform_values do |years|
+      years.transform_values(&:count)
+    end
+
+    render json: { lawyers: lawyers_with_counts }
   end
 
   def details
