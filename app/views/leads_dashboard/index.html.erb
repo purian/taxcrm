@@ -8,8 +8,13 @@
 <% end %>
 
 <div id="total-leads-over-time">
-  <h2>Total Leads Over Time</h2>
-  <%= line_chart @total_leads_over_time %>
+  <h2>Total Leads Over Time (Month)</h2>
+  <%= line_chart @total_leads_over_time_month %>
+</div>
+
+<div id="total-leads-over-time">
+  <h2>Total Leads Over Time (Week)</h2>
+  <%= line_chart @total_leads_over_time_week %>
 </div>
 
 <div id="leads-by-status">

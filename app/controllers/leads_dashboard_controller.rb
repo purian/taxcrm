@@ -6,7 +6,8 @@ class LeadsDashboardController < ApplicationController
     year = params[:year] || Date.current.year.to_s
     @filtered_leads = @leads.where("strftime('%Y', created_at) = ?", year)
 
-    @total_leads_over_time = @filtered_leads.group_by_day(:created_at).count
+    @total_leads_over_time_month = @filtered_leads.group_by_month(:created_at).count
+    @total_leads_over_time_week = @filtered_leads.group_by_week(:created_at).count
     @leads_by_status = @filtered_leads.group(:LeadStatusId_Name).count
     
     
