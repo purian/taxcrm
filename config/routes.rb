@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   get 'leads', to: 'leads#index'
   get 'leads/filter', to: 'leads#filter'
   get 'leads/details', to: 'leads#details'
+  get 'leads/show_leads', to: 'leads#show_leads'
   
   get 'charts/index'
   get 'charts', to: 'charts#index'

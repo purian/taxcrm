@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_30_093730) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_12_222959) do
   create_table "clients", force: :cascade do |t|
     t.string "objectId"
     t.string "Name"
@@ -64,6 +64,46 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_30_093730) do
     t.text "SourceList"
     t.string "PraiseTax"
     t.string "Lawyers_Name"
+    t.string "Website"
+    t.string "LeadOwnerId_objectId"
+    t.string "LeadOwnerId_username"
+    t.boolean "LeadOwnerId_active"
+    t.string "LeadOwnerId_job"
+    t.string "LeadOwnerId_phone"
+    t.string "LeadOwnerId_extension"
+    t.string "PhoneNumber2"
+    t.string "Fax"
+    t.string "State"
+    t.string "City"
+    t.string "Address"
+    t.text "Comment"
+    t.boolean "Heirs"
+    t.text "AcademicDetails"
+    t.text "AlimonyDetails"
+    t.text "ArmyDischargeDetails"
+    t.text "DonationDetails"
+    t.text "FamilyDisabilityDetails"
+    t.text "HandicappedDetails"
+    t.text "HospitalDetails"
+    t.text "ImmigrationCardDetails"
+    t.text "NotWorkingDetails"
+    t.text "PensionDepositDetails"
+    t.text "PensionDetails"
+    t.text "ReservesDetails"
+    t.text "SecuritiesDetails"
+    t.text "UnemploymentFeeDetails"
+    t.string "LeadStatusId_objectId"
+    t.string "TaxType_objectId"
+    t.string "TaxType_Name"
+    t.integer "Number2"
+    t.string "Campaign"
+    t.string "AddressOfSale"
+    t.string "AverageIncome"
+    t.string "AverageIncomePartner"
+    t.string "DivorceYear"
+    t.string "YearOfSale"
+    t.string "SpouseID"
+    t.datetime "NextNote", precision: nil
     t.index ["objectId"], name: "index_leads_on_objectId", unique: true
   end
 
