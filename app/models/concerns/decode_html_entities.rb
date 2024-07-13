@@ -1,4 +1,3 @@
-# app/models/concerns/decode_html_entities.rb
 module DecodeHtmlEntities
   extend ActiveSupport::Concern
 
@@ -6,17 +5,12 @@ module DecodeHtmlEntities
     before_save :decode_html_entities
   end
 
-  private
-
   def decode_html_entities
-    attributes.each do |attr_name, value|
-      if value.is_a?(String) && (columns_hash[attr_name].type == :string || columns_hash[attr_name].type == :text)
-        self[attr_name] = decode_html_entities_in_string(value)
+    puts "I'm Here!"
+    self.class.columns_hash.each do |column_name, column_type|
+      if column_type.type == :string || column_type.type == :text
+        self[column_name] = CGI.unescapeHTML(self[column_name]) if self[column_name].present?
       end
     end
-  end
-
-  def decode_html_entities_in_string(str)
-    CGI.unescapeHTML(str)
   end
 end

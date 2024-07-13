@@ -155,7 +155,8 @@ class FetchLeadsDataService
       AverageIncomePartner: record['AverageIncomePartner'],
       DivorceYear: record['DivorceYear'],
       YearOfSale: record['YearOfSale'],
-      SpouseID: record['SpouseID']
+      SpouseID: record['SpouseID'],
+      NextNote: record.dig('NextNote', 'iso')
     }
   end
 
