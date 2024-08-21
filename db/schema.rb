@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_12_222959) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_10_065200) do
   create_table "clients", force: :cascade do |t|
     t.string "objectId"
     t.string "Name"
@@ -104,7 +104,29 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_12_222959) do
     t.string "YearOfSale"
     t.string "SpouseID"
     t.datetime "NextNote", precision: nil
+    t.datetime "last_details_scraped_at"
+    t.string "YearOfSaleNew"
+    t.string "Whenwasthepropertybought"
     t.index ["objectId"], name: "index_leads_on_objectId", unique: true
+  end
+
+  create_table "personal_informations", force: :cascade do |t|
+    t.integer "oid"
+    t.string "first_name"
+    t.string "last_name"
+    t.integer "voter_id"
+    t.integer "campaign_oid"
+    t.integer "ballot_box_oid"
+    t.boolean "deleted"
+    t.string "father_name"
+    t.string "street"
+    t.string "house_number"
+    t.string "apartment_number"
+    t.integer "voter_number"
+    t.integer "ballot_box_number"
+    t.integer "city_oid"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "referrals", force: :cascade do |t|

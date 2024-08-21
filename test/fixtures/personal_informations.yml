@@ -1,0 +1,33 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  oid: 1
+  first_name: MyString
+  last_name: MyString
+  voter_id: 1
+  campaign_oid: 1
+  ballot_box_oid: 1
+  deleted: false
+  father_name: MyString
+  street: MyString
+  house_number: MyString
+  apartment_number: MyString
+  voter_number: 1
+  ballot_box_number: 1
+  city_oid: 1
+
+two:
+  oid: 1
+  first_name: MyString
+  last_name: MyString
+  voter_id: 1
+  campaign_oid: 1
+  ballot_box_oid: 1
+  deleted: false
+  father_name: MyString
+  street: MyString
+  house_number: MyString
+  apartment_number: MyString
+  voter_number: 1
+  ballot_box_number: 1
+  city_oid: 1

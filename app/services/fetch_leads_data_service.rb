@@ -52,10 +52,13 @@ class FetchLeadsDataService
 
   def fetch_and_update_lead_details
     Lead.find_each do |lead|
-      response = HTTParty.post(DETAIL_URL, headers: request_headers, body: detail_request_body(lead.objectId).to_json)
-      lead_details = response.parsed_response['results'].first
+      if lead.last_details_scraped_at.nil? || lead.updated_at > lead.last_details_scraped_at
+        response = HTTParty.post(DETAIL_URL, headers: request_headers, body: detail_request_body(lead.objectId).to_json)
+      
+        lead_details = response.parsed_response['results'].first
 
-      lead.update(prepare_lead_record(lead_details))
+        lead.update(prepare_lead_record(lead_details))
+      end
     end
   end
 
@@ -156,7 +159,10 @@ class FetchLeadsDataService
       DivorceYear: record['DivorceYear'],
       YearOfSale: record['YearOfSale'],
       SpouseID: record['SpouseID'],
-      NextNote: record.dig('NextNote', 'iso')
+      NextNote: record.dig('NextNote', 'iso'),
+      YearOfSaleNew: record.dig('YearOfSaleNew', 'Name'),
+      Whenwasthepropertybought: record['Whenwasthepropertybought'],
+      last_details_scraped_at: Time.now
     }
   end
 

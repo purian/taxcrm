@@ -37,7 +37,8 @@ class LeadsController < ApplicationController
   def show_leads
     week_start = Date.parse(params[:week_start])
     week_end = week_start.end_of_week
-
+    puts week_start
+    puts week_end
     @leads = Lead.where(created_at: week_start..week_end, LeadStatusId_Name: params[:status])
     render json: {
       leads: @leads.map do |lead|

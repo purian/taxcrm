@@ -46,26 +46,17 @@
                 lawyerSelect.innerHTML = "<option value=''>Select Lawyer and Year</option>";
                 for (const [lawyer, years] of Object.entries(data.lawyers)) {
                   for (const [year, count] of Object.entries(years)) {
-                    const option = document.createElement("option");
-                    option.value = `${lawyer}-${year}`;
-                    option.text = `${lawyer} (${year} - ${count} records)`;
-                    lawyerSelect.appendChild(option);
+                    if (count > 0) {
+                      const option = document.createElement("option");
+                      option.value = `${lawyer}-${year}`;
+                      option.text = `${lawyer} (${year} - ${count} records)`;
+                      lawyerSelect.appendChild(option);
+                    }
                   }
                 }
               });
           }
         }
-
-        // Fetch lawyers if a lead owner is already selected on initial load
-        if (leadOwnerSelect.value) {
-          fetchLawyers(leadOwnerSelect.value);
-        }
-
-        leadOwnerSelect.addEventListener("change", function() {
-          fetchLawyers(this.value);
-        });
-
-        lawyerSelect.addEventListener("change", updateChart);
 
         function updateChart() {
           const leadOwner = leadOwnerSelect.value;
@@ -78,27 +69,75 @@
               .then(response => response.json())
               .then(data => {
                 new Chartkick.LineChart("chart-container", data.leads);
+                updateDetailsTable(data.leads);
               });
           }
         }
 
-        document.getElementById("chart-container").addEventListener("click", function(event) {
-          if (event.target.nodeName === "path") {
-            const weekStart = event.target.getAttribute("data-week-start");
-            const status = event.target.getAttribute("data-status");
-            fetch(`/leads/show_leads?week_start=${weekStart}&status=${status}`)
-              .then(response => response.json())
-              .then(data => {
-                const detailsContainer = document.getElementById("details-container");
-                detailsContainer.innerHTML = "<table><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone Number</th><th>Lead Status</th><th>Lead Owner</th><th>Documentation</th></tr>";
-                data.leads.forEach(lead => {
-                  const row = document.createElement("tr");
-                  row.innerHTML = `<td>${lead.id}</td><td>${lead.Name}</td><td>${lead.Email}</td><td>${lead.PhoneNumber}</td><td>${lead.LeadStatusId_Name}</td><td>${lead.LeadOwnerId_name}</td><td>${lead.Documentation}</td>`;
-                  detailsContainer.querySelector("table").appendChild(row);
+        function updateDetailsTable(leads) {
+          const detailsContainer = document.getElementById("details-container");
+          detailsContainer.innerHTML = "<table><tr><th>Week</th><th>Status</th><th>Total</th><th>Details</th></tr>";
+          
+          Object.entries(leads).forEach(([key, value]) => {
+            if (value > 0) {
+              const [week, status] = key.split(",");
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                <td>${week}</td>
+                <td>${status}</td>
+                <td>${value}</td>
+                <td><a href="/leads/show_leads?week_start=${week}&status=${status}" data-week="${week}" data-status="${status}" class="details-link">View Details</a></td>
+              `;
+              detailsContainer.querySelector("table").appendChild(row);
+            }
+          });
+
+          document.querySelectorAll(".details-link").forEach(link => {
+            link.addEventListener("click", function(event) {
+              event.preventDefault();
+              const weekStart = this.dataset.week;
+              const status = this.dataset.status;
+              fetch(`/leads/show_leads?week_start=${weekStart}&status=${status}`)
+                .then(response => response.json())
+                .then(data => {
+                  const detailsContainer = document.getElementById("details-container");
+                  detailsContainer.innerHTML = "<table><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone Number</th><th>Lead Status</th><th>Lead Owner</th><th>Documentation</th></tr>";
+                  data.leads.forEach(lead => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `<td>${lead.id}</td><td>${lead.Name}</td><td>${lead.Email}</td><td>${lead.PhoneNumber}</td><td>${lead.LeadStatusId_Name}</td><td>${lead.LeadOwnerId_name}</td><td>${lead.Documentation}</td>`;
+                    detailsContainer.querySelector("table").appendChild(row);
+                  });
                 });
-              });
+            });
+          });
+        }
+
+        function initializeFromURL() {
+          const params = new URLSearchParams(window.location.search);
+          const leadOwner = params.get('lead_owner');
+          const lawyerYear = params.get('lawyer_year');
+
+          if (leadOwner) {
+            leadOwnerSelect.value = leadOwner;
+            fetchLawyers(leadOwner);
           }
+
+          if (lawyerYear) {
+            lawyerSelect.value = lawyerYear;
+            updateChart();
+          }
+        }
+
+        leadOwnerSelect.addEventListener("change", function() {
+          fetchLawyers(this.value);
         });
+
+        lawyerSelect.addEventListener("change", function() {
+          updateChart();
+        });
+
+        // Initialize selections from URL on page load
+        initializeFromURL();
       });
     </script>
   </body>
