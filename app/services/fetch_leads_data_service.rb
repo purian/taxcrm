@@ -38,24 +38,24 @@ class FetchLeadsDataService
 
   def fetch_data
     skip = 0
-    records = []
     loop do
       Rails.logger.info "Fetching leads data with skip=#{skip} at #{Time.now}"
       response = HTTParty.post(BASE_URL, headers: request_headers, body: request_body(skip).to_json)
       results = response.parsed_response['results']
       break if results.empty?
 
-      results.each { |record| records << prepare_record(record) }
+      records = results.map { |record| prepare_record(record) }
+
+      if records.any?
+        Rails.logger.info "Saving #{records.size} leads to the database at #{Time.now}"
+        Lead.upsert_all(records, unique_by: :objectId)
+        Rails.logger.info "Saved #{records.size} leads to the database at #{Time.now}"
+      else
+        Rails.logger.info "No leads found to save at #{Time.now}"
+      end
+
       skip += 100
       sleep 2
-    end
-
-    if records.any?
-      Rails.logger.info "Saving #{records.size} leads to the database at #{Time.now}"
-      Lead.upsert_all(records, unique_by: :objectId)
-      Rails.logger.info "Saved #{records.size} leads to the database at #{Time.now}"
-    else
-      Rails.logger.info "No leads found to save at #{Time.now}"
     end
   end
 
