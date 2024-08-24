@@ -17,6 +17,4 @@ test:
   
 production:
   <<: *default
-  database: tax_crm_production
-  username: <%= ENV['DATABASE_USERNAME'] %>
-  password: <%= ENV['DATABASE_PASSWORD'] %>
+  url: <%= ENV['DATABASE_URL'] %>
