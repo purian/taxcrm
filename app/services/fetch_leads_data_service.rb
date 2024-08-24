@@ -28,8 +28,10 @@ class FetchLeadsDataService
   end
 
   def call
+    Rails.logger.info "Starting FetchLeadsDataService at #{Time.now}"
     fetch_data
     fetch_and_update_lead_details
+    Rails.logger.info "Completed FetchLeadsDataService at #{Time.now}"
   end
 
   private
@@ -38,6 +40,7 @@ class FetchLeadsDataService
     skip = 0
     records = []
     loop do
+      Rails.logger.info "Fetching leads data with skip=#{skip} at #{Time.now}"
       response = HTTParty.post(BASE_URL, headers: request_headers, body: request_body(skip).to_json)
       results = response.parsed_response['results']
       break if results.empty?
@@ -47,17 +50,29 @@ class FetchLeadsDataService
       sleep 2
     end
 
-    Lead.upsert_all(records, unique_by: :objectId) unless records.empty?
+    if records.any?
+      Rails.logger.info "Saving #{records.size} leads to the database at #{Time.now}"
+      Lead.upsert_all(records, unique_by: :objectId)
+      Rails.logger.info "Saved #{records.size} leads to the database at #{Time.now}"
+    else
+      Rails.logger.info "No leads found to save at #{Time.now}"
+    end
   end
 
   def fetch_and_update_lead_details
     Lead.find_each do |lead|
       if lead.last_details_scraped_at.nil? || lead.updated_at > lead.last_details_scraped_at
+        Rails.logger.info "Fetching details for lead #{lead.objectId} at #{Time.now}"
         response = HTTParty.post(DETAIL_URL, headers: request_headers, body: detail_request_body(lead.objectId).to_json)
       
         lead_details = response.parsed_response['results'].first
 
-        lead.update(prepare_lead_record(lead_details))
+        if lead_details
+          Rails.logger.info "Updating lead #{lead.objectId} with new details at #{Time.now}"
+          lead.update(prepare_lead_record(lead_details))
+        else
+          Rails.logger.warn "No details found for lead #{lead.objectId} at #{Time.now}"
+        end
       end
     end
   end
