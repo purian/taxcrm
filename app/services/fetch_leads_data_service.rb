@@ -54,7 +54,7 @@ class FetchLeadsDataService
         Rails.logger.info "No leads found to save at #{Time.now}"
       end
 
-      skip += 100
+      skip += 1000
       sleep 2
     end
   end
@@ -85,7 +85,7 @@ class FetchLeadsDataService
     {
       where: { IsAccount: false },
       keys: "createdAt,CompanyId,LeadStatusId.Name,Number,Documentation,SourceList,Name,Email,PhoneNumber,LeadOwnerId.name,PraiseTax,Lawyers.Name,IsAccount",
-      limit: 100,
+      limit: 1000,
       skip: skip,
       _method: "GET",
       _ApplicationId: "aaaaaaae3aac375841ec08b905439c3fa4316c3d",
