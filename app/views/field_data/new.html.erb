@@ -25,9 +25,9 @@
       padding: 20px;
       box-sizing: border-box;
     }
-    .logo {
+   .logo {
       align-self: flex-start;
-      width: 100px; /* Adjust as needed */
+      width: 180px; /* Adjusted size */
       height: auto;
       margin-bottom: 20px;
     }
@@ -64,7 +64,7 @@
 </head>
 <body>
   <div class="container">
-    <img src="path/to/your/logo.png" alt="מגיע לי החזר" class="logo">
+    <%= image_tag 'logo.jpeg', alt: 'מגיע לי החזר', class: 'logo' %>    
     <textarea id="encrypted-input" class="text-box" placeholder="הכנס טקסט של התוסף"></textarea>
     <div class="button-container">
       <button id="decode-button">חשיפה</button>
