@@ -60,6 +60,20 @@
     #decode-button:hover {
       background-color: #E91E63;
     }
+    #save-button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    #save-button:hover {
+      background-color: #45a049;
+    }
   </style>
 </head>
 <body>
@@ -70,6 +84,9 @@
       <button id="decode-button">חשיפה</button>
     </div>
     <textarea id="decoded-output" class="text-box" placeholder="הלידים יופיעו כאן לאחר לחיצה על הכפתור" readonly></textarea>
+    <div class="button-container">
+      <button id="save-button">שמירה</button>
+    </div>
   </div>
   <script>
     document.getElementById('decode-button').addEventListener('click', function() {
@@ -92,6 +109,24 @@
         }
       })
       .catch(error => console.error('Error:', error));
+    });
+
+    document.getElementById('save-button').addEventListener('click', function() {
+      const decodedContent = document.getElementById('decoded-output').value;
+      if (!decodedContent) {
+        alert('אין תוכן לשמירה');
+        return;
+      }
+
+      // Add BOM for UTF-8
+      const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+      const content = new Blob([bom, decodedContent], { type: 'text/csv;charset=utf-8;' });
+      
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(content);
+      link.download = 'decoded_data.csv';
+      link.click();
+      URL.revokeObjectURL(link.href);
     });
   </script>
 </body>
