@@ -85,12 +85,9 @@
       })
       .then(response => response.json())
       .then(data => {
-        console.log(data);
         if (data.decoded_content) {
-          // Decode the UTF-8 encoded string
-          const decodedText = decodeURIComponent(escape(data.decoded_content));
-          document.getElementById('decoded-output').value = decodedText;
-        } else {
+          document.getElementById('decoded-output').value = data.decoded_content;
+        } else if (data.error) {
           alert('Error decoding content: ' + data.error);
         }
       })
