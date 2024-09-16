@@ -15,4 +15,9 @@ Rails.application.routes.draw do
   get 'field_data/new', to: 'field_data#new', as: 'new_field_data'
   post 'field_data/decode', to: 'field_data#decode'
   
+  resources :external_data, only: [:index] do
+    member do
+      patch :update_lead_phone_number
+    end
+  end
 end
