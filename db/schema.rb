@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_25_115808) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_18_095438) do
   create_table "clients", force: :cascade do |t|
     t.string "objectId"
     t.string "Name"
@@ -30,6 +30,47 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_25_115808) do
     t.datetime "DateBecomeCustomer"
     t.text "Documentation"
     t.boolean "IsAccount"
+    t.string "Website"
+    t.string "PhoneNumber2"
+    t.string "Source"
+    t.string "OtherSource"
+    t.string "Fax"
+    t.boolean "Heirs"
+    t.integer "NumberOfHeirs"
+    t.text "Comment"
+    t.string "State"
+    t.string "City"
+    t.string "Address"
+    t.string "StatusId"
+    t.string "FamilyStatus"
+    t.string "PropertyTypeSold"
+    t.string "SoldProperty6Years"
+    t.string "Industry"
+    t.string "AdditionalAsset"
+    t.string "AdditionalSellers"
+    t.string "WorkStatus"
+    t.string "LeadStatusId"
+    t.string "AccountIsHanicapped"
+    t.string "TaxType"
+    t.string "DocStatus"
+    t.string "AddressOfSale"
+    t.string "AverageIncome"
+    t.string "AverageIncomePartner"
+    t.string "DivorceYear"
+    t.string "YearOfSale"
+    t.boolean "LawyerComissionPayed"
+    t.string "SpouseID"
+    t.string "Lawyers"
+    t.string "ChangedLeadToClient"
+    t.string "Rentpayment"
+    t.string "NeedPromotion"
+    t.boolean "mizrhai"
+    t.boolean "Clalit"
+    t.boolean "DiscountBank"
+    t.string "ChangingLead"
+    t.boolean "migdal"
+    t.decimal "mortgage", precision: 10, scale: 2
+    t.datetime "last_details_scraped_at"
     t.index ["objectId"], name: "index_clients_on_objectId", unique: true
   end
 
