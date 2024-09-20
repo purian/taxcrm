@@ -78,7 +78,7 @@ class FetchClientsDataService
         begin
           response = HTTParty.post(DETAIL_URL, headers: request_headers, body: detail_request_body(client.objectId).to_json)
         
-          if response.success?
+          if response.success? && response.parsed_response.is_a?(Hash)
             client_details = response.parsed_response['results']&.first
             if client_details
               Rails.logger.info "Updating client #{client.objectId} with new details at #{Time.now}"
@@ -99,7 +99,8 @@ class FetchClientsDataService
             Rails.logger.error "Failed to fetch details for client #{client.objectId} after 10 attempts: #{e.message}"
           end
         rescue StandardError => e
-          Rails.logger.error "Unexpected error for client #{client.objectId}: #{e.message}"
+          Rails.logger.error "Unexpected error for client #{client.objectId}: #{e.class} - #{e.message}"
+          Rails.logger.error e.backtrace.join("\n")
         end
       end
     end
