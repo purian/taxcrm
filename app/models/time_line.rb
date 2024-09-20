@@ -15,8 +15,6 @@
 #  updated_at      :datetime         not null
 #
 class TimeLine < ApplicationRecord
-  serialize :data, JSON
-
   belongs_to :lead, foreign_key: 'object_id_value', optional: true
   belongs_to :client, foreign_key: 'object_id_value', optional: true
   belongs_to :sale, foreign_key: 'object_id_value', optional: true
@@ -28,6 +26,8 @@ class TimeLine < ApplicationRecord
   validates :object_id_value, presence: true
 
   before_save :set_name
+
+  serialize :data, coder: JSON
 
   private
 

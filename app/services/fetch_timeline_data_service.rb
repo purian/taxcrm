@@ -80,8 +80,8 @@ class FetchTimelineDataService
         pinned: result['Pinned'],
         last: result['Last'],
         created_at: result['createdAt'],
-        updated_at: result['updatedAt'],
-        user_id: result.dig('user', 'objectId')
+        updated_at: result['updatedAt']
+        # Removed user_id
       }
     end
   end
