@@ -20,4 +20,6 @@
 #
 class Sale < ApplicationRecord
   include DecodeHtmlEntities
+
+  has_many :time_lines, foreign_key: 'object_id_value'
 end

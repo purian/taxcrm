@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_18_095438) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_20_161747) do
   create_table "clients", force: :cascade do |t|
     t.string "objectId"
     t.string "Name"
@@ -208,4 +208,22 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_18_095438) do
     t.index ["objectId"], name: "index_sales_on_objectId", unique: true
   end
 
+  create_table "time_lines", force: :cascade do |t|
+    t.string "objectId"
+    t.string "event"
+    t.string "object_class"
+    t.string "object_id_value"
+    t.string "name"
+    t.text "data"
+    t.boolean "pinned"
+    t.boolean "last"
+    t.integer "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["object_class"], name: "index_time_lines_on_object_class"
+    t.index ["object_id_value"], name: "index_time_lines_on_object_id_value"
+    t.index ["user_id"], name: "index_time_lines_on_user_id"
+  end
+
+  add_foreign_key "time_lines", "users"
 end
