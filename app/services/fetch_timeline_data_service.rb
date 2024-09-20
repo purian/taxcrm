@@ -80,8 +80,15 @@ class FetchTimelineDataService
         pinned: result['Pinned'],
         last: result['Last'],
         created_at: result['createdAt'],
-        updated_at: result['updatedAt']
-        # Removed user_id
+        updated_at: result['updatedAt'],
+        sale_total: result['SaleTotal'],
+        sale_name: result['SaleName'],
+        sale_status_id: result.dig('SaleStatusId', 'objectId'),
+        account_id: result.dig('AccountId', 'objectId'),
+        sale_owner_id: result.dig('SaleOwner', 'objectId'),
+        sale_id: result.dig('SaleId', 'objectId'),
+        user_id: result.dig('user', 'objectId'),
+        account_name: result.dig('AccountId', 'Name')
       }
     end
   end

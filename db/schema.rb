@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_20_191300) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_20_193640) do
   create_table "clients", force: :cascade do |t|
     t.string "objectId"
     t.string "Name"
@@ -219,6 +219,14 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_20_191300) do
     t.boolean "last"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "sale_total"
+    t.string "sale_name"
+    t.string "sale_status_id"
+    t.string "account_id"
+    t.string "sale_owner_id"
+    t.string "sale_id"
+    t.string "user_id"
+    t.string "account_name"
     t.index ["object_class"], name: "index_time_lines_on_object_class"
     t.index ["object_id_value"], name: "index_time_lines_on_object_id_value"
   end
