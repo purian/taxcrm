@@ -29,10 +29,9 @@ class FetchClientsDataService
 
   def call
     Rails.logger.info "Starting FetchClientsDataService at #{Time.now}"
-    
     fetch_data
     fetch_and_update_client_details
-    fetch_and_update_client_timeline
+    # fetch_and_update_client_timeline
     Rails.logger.info "Completed FetchClientsDataService at #{Time.now}"
   end
 
