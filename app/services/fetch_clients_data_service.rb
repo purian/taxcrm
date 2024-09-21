@@ -21,15 +21,18 @@ class FetchClientsDataService
   }
 
   def initialize
-    email = 'benamram119@walla.com'
-    password = 'Gg198666'
-    @token = AuthenticationService.fetch_token(email, password)
+    @email = 'benamram119@walla.com'
+    @password = 'Gg198666'
+    @token = AuthenticationService.fetch_token(@email, @password)
+    @timeline_service = FetchTimelineDataService.new(@email, @password)
   end
 
   def call
     Rails.logger.info "Starting FetchClientsDataService at #{Time.now}"
+    
     fetch_data
     fetch_and_update_client_details
+    fetch_and_update_client_timeline
     Rails.logger.info "Completed FetchClientsDataService at #{Time.now}"
   end
 
@@ -101,6 +104,23 @@ class FetchClientsDataService
         rescue StandardError => e
           Rails.logger.error "Unexpected error for client #{client.objectId}: #{e.class} - #{e.message}"
           Rails.logger.error e.backtrace.join("\n")
+        end
+      end
+    end
+  end
+
+  def fetch_and_update_client_timeline
+    Client.find_each do |client|
+      Rails.logger.debug "Fetching timeline for client: #{client.objectId}"
+      timeline_data = @timeline_service.fetch_timeline(client.objectId)
+      
+      Rails.logger.debug "Retrieved #{timeline_data.size} timeline items for client: #{client.objectId}"
+      
+      timeline_data.each do |timeline_item|
+        Rails.logger.debug "Processing timeline item: #{timeline_item[:objectId]}"
+        TimeLine.create_or_find_by!(objectId: timeline_item[:objectId]) do |tl|
+          tl.assign_attributes(timeline_item)
+          tl.client = client
         end
       end
     end
