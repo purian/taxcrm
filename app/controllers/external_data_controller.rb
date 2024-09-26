@@ -2,8 +2,7 @@ class ExternalDataController < ApplicationController
   before_action :authenticate
 
   def index
-    # Add your index action logic here
-    @leads = Lead.all # Assuming you have a Lead model
+    @leads = Lead.where("PhoneNumber = '000' OR LeadStatusId_Name = 'חסר נייד'")
   end
 
   def update_lead_phone_number

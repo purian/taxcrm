@@ -3,17 +3,19 @@
 <table>
   <thead>
     <tr>
+      <th>Company ID</th>
       <th>Name</th>
       <th>Email</th>
-      <th>Phone Number</th>
+      <th>Address</th>
     </tr>
   </thead>
   <tbody>
     <% @leads.each do |lead| %>
       <tr>
-        <td><%= lead.name %></td>
-        <td><%= lead.email %></td>
-        <td><%= lead.phone_number %></td>
+        <td><%= lead.CompanyId %></td>
+        <td><%= lead.Name %></td>
+        <td><%= lead.Email %></td>
+        <td><%= lead.Address %></td>
       </tr>
     <% end %>
   </tbody>
