@@ -80,5 +80,5 @@ gem 'rufus-scheduler'
 gem 'chartkick'
 gem 'chart-js-rails'
 gem 'groupdate'
-
+gem 'font-awesome-sass', '~> 5.15.1'
 
