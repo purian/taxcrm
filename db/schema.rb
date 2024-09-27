@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_20_193640) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_27_063739) do
   create_table "clients", force: :cascade do |t|
     t.string "objectId"
     t.string "Name"
@@ -87,6 +87,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_20_193640) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["objectId"], name: "index_contacts_on_objectId", unique: true
+  end
+
+  create_table "external_details", force: :cascade do |t|
+    t.string "object_type"
+    t.integer "object_id"
+    t.string "phone_number"
+    t.string "comment"
+    t.boolean "invalid", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["object_type", "object_id"], name: "index_external_details_on_object"
   end
 
   create_table "field_data", force: :cascade do |t|
