@@ -90,14 +90,14 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_27_063739) do
   end
 
   create_table "external_details", force: :cascade do |t|
-    t.string "object_type"
-    t.integer "object_id"
+    t.string "object_id", null: false
+    t.string "object_type", null: false
     t.string "phone_number"
     t.string "comment"
     t.boolean "invalid", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["object_type", "object_id"], name: "index_external_details_on_object"
+    t.index ["object_id", "object_type"], name: "index_external_details_on_object_id_and_object_type"
   end
 
   create_table "field_data", force: :cascade do |t|
