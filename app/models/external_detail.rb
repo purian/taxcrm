@@ -5,11 +5,15 @@ class ExternalDetail < ApplicationRecord
 
   validates :object_id, :object_type, presence: true
   validates :object_type, inclusion: { in: %w(Lead Client Sale) }
-  validates :phone_number, presence: true
+  validates :phone_number, presence: true, unless: :invalid_phone?
 
   before_validation :set_object_type
 
   private
+
+  def invalid_phone?
+    !is_valid
+  end
 
   def set_object_type
     self.object_type = case
