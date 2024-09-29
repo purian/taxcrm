@@ -16,6 +16,26 @@ class ExternalDataController < ApplicationController
     end
   end
 
+  def create
+    external_detail_params = params.require(:external_detail).permit(:object_id, :object_type, :phone_number, :comment, :is_valid)
+    external_detail_params[:is_valid] = external_detail_params[:is_valid] != 'false'
+    external_detail_params[:object_type] = 'Lead' # Assuming all records are for Leads
+
+    # Remove blank phone number if the record is invalid
+    external_detail_params.delete(:phone_number) if external_detail_params[:phone_number].blank? && !external_detail_params[:is_valid]
+
+    external_detail = ExternalDetail.new(external_detail_params)
+
+    if external_detail.save
+      flash[:notice] = 'External detail created successfully'
+      redirect_to external_data_index_path
+    else
+      flash[:alert] = external_detail.errors.full_messages.join(', ')
+      @leads = Lead.where("PhoneNumber = '000' OR LeadStatusId_Name = 'חסר נייד'")
+      render :index
+    end
+  end
+
   private
 
   def authenticate

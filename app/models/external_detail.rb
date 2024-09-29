@@ -1,7 +1,7 @@
 class ExternalDetail < ApplicationRecord
-  belongs_to :lead, foreign_key: :object_id, primary_key: :object_id, optional: true
-  belongs_to :client, foreign_key: :object_id, primary_key: :object_id, optional: true
-  belongs_to :sale, foreign_key: :object_id, primary_key: :object_id, optional: true
+  belongs_to :lead, foreign_key: :object_id, primary_key: :objectId, optional: true
+  belongs_to :client, foreign_key: :object_id, primary_key: :objectId, optional: true
+  belongs_to :sale, foreign_key: :object_id, primary_key: :objectId, optional: true
 
   validates :object_id, :object_type, presence: true
   validates :object_type, inclusion: { in: %w(Lead Client Sale) }

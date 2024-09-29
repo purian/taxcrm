@@ -5,7 +5,7 @@ class CreateExternalDetails < ActiveRecord::Migration[6.1]
       t.string :object_type, null: false
       t.string :phone_number
       t.string :comment
-      t.boolean :invalid, default: false
+      t.boolean :is_valid, default: true
 
       t.timestamps
     end

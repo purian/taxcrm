@@ -94,7 +94,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_27_063739) do
     t.string "object_type", null: false
     t.string "phone_number"
     t.string "comment"
-    t.boolean "invalid", default: false
+    t.boolean "is_valid", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["object_id", "object_type"], name: "index_external_details_on_object_id_and_object_type"
