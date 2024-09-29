@@ -41,7 +41,7 @@
                   <% end %>
                 </td>
                 <%= form_with(url: external_data_path, method: :post, local: true, class: 'form-inline') do |f| %>
-                  <%= f.hidden_field :object_id, value: lead.object_id %>
+                  <%= f.hidden_field :objectId, value: lead.objectId %>
                   <td class="px-4 py-3">
                     <%= f.text_field :phone_number, class: 'form-control form-control-sm' %>
                   </td>
@@ -51,7 +51,7 @@
                   <td class="px-4 py-3">
                     <div class="d-flex justify-content-between" style="gap: 10px;">
                       <%= f.submit 'שמור', class: 'btn btn-primary btn-sm flex-grow-1' %>
-                      <%= button_to 'לא תקין', external_data_path, params: { external_detail: { object_id: lead.object_id, is_invalid: true } }, method: :post, class: 'btn btn-warning btn-sm flex-grow-1', style: 'white-space: nowrap;' %>
+                      <%= button_to 'לא תקין', external_data_path, params: { external_detail: { objectId: lead.objectId, is_invalid: false } }, method: :post, class: 'btn btn-warning btn-sm flex-grow-1', style: 'white-space: nowrap;' %>
                     </div>
                   </td>
                 <% end %>
