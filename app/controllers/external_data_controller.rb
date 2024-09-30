@@ -3,6 +3,8 @@ class ExternalDataController < ApplicationController
 
   def index
     @leads = Lead.where("PhoneNumber = '000' OR LeadStatusId_Name = 'חסר נייד'")
+      .left_outer_joins(:external_details)
+      .where(external_details: { id: nil })
   end
 
   def update_lead_phone_number

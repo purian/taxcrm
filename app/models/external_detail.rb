@@ -12,7 +12,7 @@ class ExternalDetail < ApplicationRecord
   private
 
   def invalid_phone?
-    !is_valid
+    !is_valid || comment.present?
   end
 
   def set_object_type

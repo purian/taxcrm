@@ -64,5 +64,5 @@
 #
 class Lead < ApplicationRecord
   include DecodeHtmlEntities
-  has_many :external_details, foreign_key: :object_id, primary_key: :object_id
+  has_many :external_details, foreign_key: :object_id, primary_key: :objectId
 end
