@@ -52,7 +52,7 @@
                   <td class="px-4 py-3">
                     <div class="d-flex justify-content-between" style="gap: 10px;">
                       <%= f.submit 'שמור', class: 'btn btn-primary btn-sm flex-grow-1' %>
-                      <%= button_tag 'לא תקין', type: 'submit', class: 'btn btn-danger btn-sm flex-grow-1', onclick: "this.form.elements['external_detail[is_valid]'].value = 'false';" %>
+                      <%= button_tag 'לא תקין', type: 'submit', class: 'btn btn-danger btn-sm flex-grow-1 text-nowrap', style: 'white-space: nowrap;', onclick: "this.form.elements['external_detail[is_valid]'].value = 'false';" %>
                     </div>
                   </td>
                 <% end %>
