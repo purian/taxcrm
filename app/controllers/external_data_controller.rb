@@ -31,7 +31,7 @@ class ExternalDataController < ApplicationController
 
     if external_detail.save
       flash[:notice] = 'External detail created successfully'
-      redirect_to external_data_path
+      redirect_to external_data_path, turbo: false
     else
       flash[:alert] = external_detail.errors.full_messages.join(', ')
       @leads = Lead.where("PhoneNumber = '000' OR LeadStatusId_Name = 'חסר נייד'")
