@@ -41,19 +41,21 @@
                   <% end %>
                 </td>
                <%= form_with(model: ExternalDetail.new, url: external_data_path, method: :post, local: true, class: 'form-inline') do |f| %>
-  <%= f.hidden_field :object_id, value: lead.objectId %>
-  <td class="px-4 py-3">
-    <%= f.text_field :phone_number, class: 'form-control form-control-sm' %>
-  </td>
-  <td class="px-4 py-3">
-    <%= f.text_area :comment, class: 'form-control form-control-sm', rows: 1 %>
-  </td>
-  <td class="px-4 py-3">
-    <div class="d-flex justify-content-between" style="gap: 10px;">
-      <%= f.submit 'שמור', class: 'btn btn-primary btn-sm flex-grow-1' %>
-    </div>
-  </td>
-<% end %>
+                  <%= f.hidden_field :object_id, value: lead.objectId %>
+                  <%= f.hidden_field :is_valid, value: true %>
+                  <td class="px-4 py-3">
+                    <%= f.text_field :phone_number, class: 'form-control form-control-sm' %>
+                  </td>
+                  <td class="px-4 py-3">
+                    <%= f.text_area :comment, class: 'form-control form-control-sm', rows: 1 %>
+                  </td>
+                  <td class="px-4 py-3">
+                    <div class="d-flex justify-content-between" style="gap: 10px;">
+                      <%= f.submit 'שמור', class: 'btn btn-primary btn-sm flex-grow-1' %>
+                      <%= button_tag 'לא תקין', type: 'submit', class: 'btn btn-danger btn-sm flex-grow-1', onclick: "this.form.elements['external_detail[is_valid]'].value = 'false';" %>
+                    </div>
+                  </td>
+                <% end %>
               </tr>
             <% end %>
           </tbody>
