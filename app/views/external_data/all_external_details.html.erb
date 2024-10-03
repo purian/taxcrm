@@ -1,0 +1,28 @@
+<h1>All External Details</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Lead Name</th>
+      <th>Company ID</th>
+      <th>Phone Number</th>
+      <th>Comment</th>
+      <th>Is Valid</th>
+      <th>Created At</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @external_details.each do |detail| %>
+      <tr>
+        <td><%= detail.id %></td>
+        <td><%= detail.lead&.Name %></td>
+        <td><%= detail.lead&.CompanyId %></td>
+        <td><%= detail.phone_number %></td>
+        <td><%= detail.comment %></td>
+        <td><%= detail.is_valid ? 'Yes' : 'No' %></td>
+        <td><%= detail.created_at.strftime('%Y-%m-%d %H:%M:%S') %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

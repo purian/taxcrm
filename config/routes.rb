@@ -16,4 +16,5 @@ Rails.application.routes.draw do
   post 'field_data/decode', to: 'field_data#decode'
   
   resources :external_data, only: [:index, :create]
+  get 'external_data/all_details', to: 'external_data#all_external_details', as: 'all_external_details'
 end
