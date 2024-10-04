@@ -1,6 +1,6 @@
 class ExternalDataController < ApplicationController
   before_action :authenticate
-  # layout 'rtl'
+  layout false
 
   def index
     @leads = Lead.where("PhoneNumber = '000' OR LeadStatusId_Name = 'חסר נייד'")
