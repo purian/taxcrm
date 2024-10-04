@@ -1,5 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>External Details</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+<!-- Add this style block for the navigation menu -->
+<style>
+  .nav-menu {
+    background-color: #333;
+    padding: 10px 0;
+    margin-bottom: 20px;
+  }
+  .nav-menu ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+  }
+  .nav-menu li {
+    margin: 0 15px;
+  }
+  .nav-menu a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  .nav-menu a:hover {
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+<!-- Add this navigation menu just before the container div -->
+<nav class="nav-menu">
+  <ul>    
+    <li><%= link_to 'כל הפרטים החיצוניים', all_external_details_path %></li>
+  </ul>
+</nav>
+
 <div class="container mt-5" dir="rtl">
   <h1 class="mb-4 text-right">עידכון מספרי טלפון</h1>
 
@@ -76,3 +123,5 @@ $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 })
 </script>
+</body>
+</html>
