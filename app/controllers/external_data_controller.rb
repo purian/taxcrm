@@ -1,9 +1,8 @@
 class ExternalDataController < ApplicationController
   before_action :authenticate
-  layout false
 
   def index
-    @leads = Lead.where("PhoneNumber = '000' OR LeadStatusId_Name = 'חסר נייד'")
+    @leads = Lead.where('"PhoneNumber" = \'000\' OR "LeadStatusId_Name" = \'חסר נייד\'')
       .left_outer_joins(:external_details)
       .where(external_details: { id: nil })
       .order(:CompanyId)
@@ -35,15 +34,13 @@ class ExternalDataController < ApplicationController
       redirect_to external_data_path
     else
       flash[:alert] = external_detail.errors.full_messages.join(', ')
-      @leads = Lead.where("PhoneNumber = '000' OR LeadStatusId_Name = 'חסר נייד'")
+      @leads = Lead.where('"PhoneNumber" = \'000\' OR "LeadStatusId_Name" = \'חסר נייד\'')
       render :index
     end
   end
 
   def all_external_details
-    @valid_details = ExternalDetail.includes(:lead).where(is_valid: true).order(created_at: :desc)
-    @invalid_details = ExternalDetail.includes(:lead).where(is_valid: false).order(created_at: :desc)
-    @active_tab = params[:tab] || 'valid'
+    @external_details = ExternalDetail.includes(:lead).order(created_at: :desc)
   end
 
   private
