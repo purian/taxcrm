@@ -1,5 +1,7 @@
 # app/controllers/field_data_controller.rb
 class FieldDataController < ApplicationController
+  skip_before_action :authenticate
+
   layout false
   def new
     # Renders a form for inputting base64 content
