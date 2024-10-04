@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_27_063739) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_04_201920) do
   create_table "clients", force: :cascade do |t|
     t.string "objectId"
     t.string "Name"
@@ -216,6 +216,59 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_27_063739) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "PraiseTaxNumber"
+    t.string "Source"
+    t.string "OtherSource"
+    t.string "LeadOwnerId_username"
+    t.string "LeadOwnerId_name"
+    t.boolean "LeadOwnerId_active"
+    t.string "LeadOwnerId_job"
+    t.string "LeadOwnerId_phone"
+    t.string "LeadOwnerId_extension"
+    t.datetime "LeadOwnerId_last_success_login", precision: nil
+    t.string "Email"
+    t.string "City"
+    t.string "Address"
+    t.string "PhoneNumber2"
+    t.string "Website"
+    t.string "Fax"
+    t.string "WorkStatus_Name"
+    t.string "FamilyStatus_Name"
+    t.string "SoldProperty6Years"
+    t.string "PropertyTypeSold_Name"
+    t.string "AdditionalSellers_Name"
+    t.integer "NumberOfHeirs"
+    t.string "AdditionalAsset"
+    t.text "Comment"
+    t.text "Documentation"
+    t.boolean "IsAccount"
+    t.string "updatedBy"
+    t.string "createdBy"
+    t.integer "Number"
+    t.string "StatusId"
+    t.string "DocStatus"
+    t.integer "Number2"
+    t.string "Lawyers_Name"
+    t.string "Lawyers_Address"
+    t.string "Lawyers_OwnerId"
+    t.string "Lawyers_PhoneNumber"
+    t.text "Lawyers_Description"
+    t.string "Lawyers_OfficePhone"
+    t.string "Lawyers_Email"
+    t.string "Lawyers_LinkingFactor"
+    t.text "Lawyers_Comment"
+    t.string "Lawyers_StatusLaw"
+    t.string "LeadStatusId_Name"
+    t.string "LeadStatusId_StateId"
+    t.datetime "DateBecomeCustomer", precision: nil
+    t.string "ChangedLeadToClient_username"
+    t.string "ChangedLeadToClient_email"
+    t.string "ChangedLeadToClient_name"
+    t.boolean "ChangedLeadToClient_active"
+    t.string "ChangedLeadToClient_extension"
+    t.string "ChangedLeadToClient_job"
+    t.string "ChangedLeadToClient_phone"
+    t.datetime "ChangedLeadToClient_last_success_login", precision: nil
+    t.string "updatedByTrigger"
     t.index ["objectId"], name: "index_sales_on_objectId", unique: true
   end
 
