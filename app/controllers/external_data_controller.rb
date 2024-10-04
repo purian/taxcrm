@@ -1,6 +1,6 @@
 class ExternalDataController < ApplicationController
   before_action :authenticate
-
+  layout false
   def index
     @leads = Lead.where('"PhoneNumber" = \'000\' OR "LeadStatusId_Name" = \'חסר נייד\'')
       .left_outer_joins(:external_details)
@@ -40,7 +40,10 @@ class ExternalDataController < ApplicationController
   end
 
   def all_external_details
-    @external_details = ExternalDetail.includes(:lead).order(created_at: :desc)
+    @valid_details = ExternalDetail.includes(:lead).where(is_valid: true).order(created_at: :desc)
+    @invalid_details = ExternalDetail.includes(:lead).where(is_valid: false).order(created_at: :desc)
+    @active_tab = params[:tab] || 'valid'
+
   end
 
   private

@@ -10,7 +10,7 @@
     </tr>
   </thead>
   <tbody>
-    <% details.each do |detail| %>
+    <% details&.each do |detail| %>
       <tr>
         <td><%= detail.id %></td>
         <td><%= detail.lead&.Name %></td>
