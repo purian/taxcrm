@@ -1,0 +1,24 @@
+<table>
+  <thead>
+    <tr>
+      <th>מזהה</th>
+      <th>שם הליד</th>
+      <th>מזהה חברה</th>
+      <th>מספר טלפון</th>
+      <th>הערה</th>
+      <th>נוצר ב</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% details.each do |detail| %>
+      <tr>
+        <td><%= detail.id %></td>
+        <td><%= detail.lead&.Name %></td>
+        <td><%= detail.lead&.CompanyId %></td>
+        <td><%= detail.phone_number %></td>
+        <td><%= detail.comment %></td>
+        <td><%= detail.created_at.strftime('%Y-%m-%d %H:%M:%S') %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

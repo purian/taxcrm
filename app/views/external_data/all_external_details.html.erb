@@ -8,6 +8,7 @@
   <%= csp_meta_tag %>
 
   <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -50,32 +51,18 @@
   <div class="container">
     <h1>כל הפרטים החיצוניים</h1>
 
-    <table>
-      <thead>
-        <tr>
-          <th>מזהה</th>
-          <th>שם הליד</th>
-          <th>מזהה חברה</th>
-          <th>מספר טלפון</th>
-          <th>הערה</th>
-          <th>תקף</th>
-          <th>נוצר ב</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @external_details.each do |detail| %>
-          <tr>
-            <td><%= detail.id %></td>
-            <td><%= detail.lead&.Name %></td>
-            <td><%= detail.lead&.CompanyId %></td>
-            <td><%= detail.phone_number %></td>
-            <td><%= detail.comment %></td>
-            <td><%= detail.is_valid ? 'כן' : 'לא' %></td>
-            <td><%= detail.created_at.strftime('%Y-%m-%d %H:%M:%S') %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+    <div class="tabs">
+      <%= link_to 'פרטים תקפים', all_external_details_path(tab: 'valid'), class: "tab #{@active_tab == 'valid' ? 'active' : ''}" %>
+      <%= link_to 'פרטים לא תקפים', all_external_details_path(tab: 'invalid'), class: "tab #{@active_tab == 'invalid' ? 'active' : ''}" %>
+    </div>
+
+    <% if @active_tab == 'valid' %>
+      <h2>פרטים תקפים</h2>
+      <%= render 'details_table', details: @valid_details %>
+    <% else %>
+      <h2>פרטים לא תקפים</h2>
+      <%= render 'details_table', details: @invalid_details %>
+    <% end %>
   </div>
 </body>
 </html>
