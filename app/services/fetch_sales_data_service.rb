@@ -71,7 +71,7 @@ class FetchSalesDataService
   end
 
   def decode_html_entities(value)
-    CGI.unescapeHTML(value.to_s)
+    CGI.unescapeHTML(value.to_s) unless value.nil?
   end
 
   def prepare_record(record)
@@ -91,5 +91,12 @@ class FetchSalesDataService
       created_at: DateTime.parse(record['createdAt']),
       updated_at: DateTime.parse(record['updatedAt'])
     }
+  end
+
+  # Add this new method to safely handle nested hash access
+  def safe_dig(hash, *keys)
+    keys.reduce(hash) do |acc, key|
+      acc.is_a?(Hash) ? (acc[key] || acc[key.to_s]) : nil
+    end
   end
 end

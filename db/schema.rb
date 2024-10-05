@@ -269,6 +269,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_04_201920) do
     t.string "ChangedLeadToClient_phone"
     t.datetime "ChangedLeadToClient_last_success_login", precision: nil
     t.string "updatedByTrigger"
+    t.datetime "last_details_scraped_at", precision: nil
     t.index ["objectId"], name: "index_sales_on_objectId", unique: true
   end
 

@@ -54,6 +54,7 @@ class AddMissingAttributesToSales < ActiveRecord::Migration[6.1]
       t.string :ChangedLeadToClient_phone
       t.datetime :ChangedLeadToClient_last_success_login
       t.string :updatedByTrigger
+      t.datetime :last_details_scraped_at
     end
   end
 end
