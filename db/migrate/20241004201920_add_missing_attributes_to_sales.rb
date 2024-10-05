@@ -1,27 +1,48 @@
 class AddMissingAttributesToSales < ActiveRecord::Migration[6.1]
   def change
-    change_table :sales do |t|
-      t.string :LeadIrrelevantReason
-      t.string :FieldAgent
-      t.string :TaxType
-      t.string :LeadStatusId
-      t.boolean :Clientconfidentiality
-      t.string :LeadOwnerId
-      t.string :ChangingLead
-      t.string :Lawyers
-      t.string :ChangedLeadToClient
-      t.string :FamilyStatus
-      t.string :WorkStatus
-      t.string :YearOfSaleNew
-      t.string :AdditionalSellers
-      t.boolean :redemption
-      t.boolean :Futuresale
-      t.string :KidsUnder18
-      t.string :PropertyTypeSold
-      t.string :AccountIsHanicapped
-      t.boolean :accident
-      t.boolean :NeedPromotion
-      t.string :CAPStatus
-    end
+    add_column :sales, :LeadIrrelevantReason, :string
+    add_column :sales, :FieldAgent, :string
+    add_column :sales, :TaxType, :string
+    add_column :sales, :LeadStatusId, :string
+    add_column :sales, :Clientconfidentiality, :boolean
+    add_column :sales, :LeadOwnerId, :string
+    add_column :sales, :ChangingLead, :string
+    add_column :sales, :Lawyers, :string
+    add_column :sales, :ChangedLeadToClient, :string
+    add_column :sales, :FamilyStatus, :string
+    add_column :sales, :WorkStatus, :string
+    add_column :sales, :YearOfSaleNew, :string
+    add_column :sales, :AdditionalSellers, :string
+    add_column :sales, :redemption, :boolean
+    add_column :sales, :Futuresale, :boolean
+    add_column :sales, :KidsUnder18, :string
+    add_column :sales, :PropertyTypeSold, :string
+    add_column :sales, :AccountIsHanicapped, :string
+    add_column :sales, :accident, :boolean
+    add_column :sales, :NeedPromotion, :boolean
+    add_column :sales, :CAPStatus, :string
+    add_column :sales, :Source, :string
+    add_column :sales, :OtherSource, :string
+    add_column :sales, :Email, :string
+    add_column :sales, :City, :string
+    add_column :sales, :CompanyId, :string
+    add_column :sales, :PhoneNumber, :string
+    add_column :sales, :Address, :string
+    add_column :sales, :PhoneNumber2, :string
+    add_column :sales, :Website, :string
+    add_column :sales, :Fax, :string
+    add_column :sales, :NumberOfHeirs, :integer
+    add_column :sales, :Comment, :text
+    add_column :sales, :Documentation, :text
+    add_column :sales, :IsAccount, :boolean
+    add_column :sales, :DateBecomeCustomer, :datetime
+    add_column :sales, :StatusId, :string
+    add_column :sales, :DocStatus, :string
+    add_column :sales, :Number2, :integer
+    add_column :sales, :updatedByTrigger, :string
+    add_column :sales, :AdditionalAsset, :string
+    add_column :sales, :SoldProperty6Years, :string  
+    add_column :sales, :createdBy, :string            
+    add_column :sales, :updatedBy, :string            
   end
 end

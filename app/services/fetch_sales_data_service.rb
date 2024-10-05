@@ -28,7 +28,7 @@ class FetchSalesDataService
 
   def call
     Rails.logger.info "Starting FetchSalesDataService at #{Time.now}"
-    # fetch_data
+    fetch_data
     fetch_and_update_sale_details
     fetch_and_update_accounting_headers
     Rails.logger.info "Completed FetchSalesDataService at #{Time.now}"
@@ -212,7 +212,39 @@ class FetchSalesDataService
 
   def prepare_sale_record(record)
     {
-     
+      objectId: decode_html_entities(record['objectId']),
+      Source: safe_dig(record, 'Source', 'objectId'),
+      OtherSource: decode_html_entities(record['OtherSource']),
+      LeadOwnerId: safe_dig(record, 'LeadOwnerId', 'objectId'),
+      Name: decode_html_entities(record['Name']),
+      Email: decode_html_entities(record['Email']),
+      City: decode_html_entities(record['City']),
+      CompanyId: decode_html_entities(record['CompanyId']),
+      PhoneNumber: decode_html_entities(record['PhoneNumber']),
+      Address: decode_html_entities(record['Address']),
+      PhoneNumber2: decode_html_entities(record['PhoneNumber2']),
+      Website: decode_html_entities(record['Website']),
+      Fax: decode_html_entities(record['Fax']),
+      WorkStatus: safe_dig(record, 'WorkStatus', 'Name'),
+      FamilyStatus: safe_dig(record, 'FamilyStatus', 'Name'),
+      SoldProperty6Years: safe_dig(record, 'SoldProperty6Years', 'objectId'),
+      PropertyTypeSold: safe_dig(record, 'PropertyTypeSold', 'Name'),
+      AdditionalSellers: safe_dig(record, 'AdditionalSellers', 'Name'),
+      NumberOfHeirs: record['NumberOfHeirs'],
+      AdditionalAsset: safe_dig(record, 'AdditionalAsset', 'objectId'),
+      Comment: decode_html_entities(record['Comment']),
+      Documentation: decode_html_entities(record['Documentation']),
+      IsAccount: record['IsAccount'],
+      Number: record['Number'],
+      Number2: record['Number2'],
+      StatusId: safe_dig(record, 'StatusId', 'objectId'),
+      DocStatus: safe_dig(record, 'DocStatus', 'objectId'),
+      Lawyers: safe_dig(record, 'Lawyers', 'Name'),
+      LeadStatusId: safe_dig(record, 'LeadStatusId', 'objectId'),
+      DateBecomeCustomer: parse_date(record['DateBecomeCustomer']),
+      ChangedLeadToClient: safe_dig(record, 'ChangedLeadToClient', 'name'),
+      created_at: parse_date(record['createdAt']),
+      updated_at: parse_date(record['updatedAt'])
     }
   end
 
