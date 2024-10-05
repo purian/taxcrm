@@ -2,7 +2,6 @@ require 'cgi' # Required for decoding HTML entities
 
 class FetchSalesDataService
   BASE_URL = 'https://api-4.mbapps.co.il/parse/classes/Sales'
-  SALE_DETAIL_URL = 'https://api-1.mbapps.co.il/parse/classes/Sales'
   ACCOUNTING_HEADERS_URL = 'https://api-1.mbapps.co.il/parse/classes/AccountingHeaders'
   HEADERS = {
     'accept' => '*/*',
@@ -29,7 +28,7 @@ class FetchSalesDataService
 
   def call
     Rails.logger.info "Starting FetchSalesDataService at #{Time.now}"
-    fetch_data
+    # fetch_data
     fetch_and_update_sale_details
     fetch_and_update_accounting_headers
     Rails.logger.info "Completed FetchSalesDataService at #{Time.now}"
@@ -58,9 +57,11 @@ class FetchSalesDataService
       Rails.logger.info "Fetching details for sale #{sale.objectId} at #{Time.now}"
       retries = 0
       begin
-        response = HTTParty.post(SALE_DETAIL_URL, 
-                                 headers: request_headers, 
-                                 body: sale_detail_request_body(sale.objectId).to_json)
+        response = HTTParty.post(
+          'https://api-1.mbapps.co.il/parse/classes/Accounts',
+          headers: request_headers.merge('priority' => 'u=1, i'),
+          body: sale_detail_request_body(sale.objectId).to_json
+        )
         
         sale_details = response.parsed_response['results'].first
         if sale_details
@@ -127,13 +128,13 @@ class FetchSalesDataService
   def sale_detail_request_body(object_id)
     {
       where: { objectId: object_id },
-      include: "Source,LeadOwnerId,WorkStatus,FamilyStatus,SoldProperty6Years,PropertyTypeSold,AdditionalSellers,AdditionalAsset,StatusId,DocStatus,Lawyers,LeadStatusId,ChangedLeadToClient",
+      include: "LeadIrrelevantReason,FieldAgent,TaxType,LeadStatusId,Clientconfidentiality,LeadOwnerId,ChangingLead,Lawyers,ChangedLeadToClient,FamilyStatus,WorkStatus,YearOfSaleNew,AdditionalSellers,redemption,Futuresale,KidsUnder18,PropertyTypeSold,AccountIsHanicapped,accident,NeedPromotion,CAPStatus",
       limit: 1,
       _method: "GET",
       _ApplicationId: "aaaaaaae3aac375841ec08b905439c3fa4316c3d",
       _JavaScriptKey: "6ee213f7b4e169caa819715ee046cded",
       _ClientVersion: "js1.10.1",
-      _InstallationId: "05469a40-8496-73cb-2384-684469410ff2",
+      _InstallationId: "9f63e5c7-8d7c-fa3b-24af-f910a1560651",
       _SessionToken: @token
     }
   end
@@ -211,60 +212,7 @@ class FetchSalesDataService
 
   def prepare_sale_record(record)
     {
-      Source: safe_dig(record, 'Source', 'objectId'),
-      OtherSource: decode_html_entities(record['OtherSource']),
-      LeadOwnerId_username: safe_dig(record, 'LeadOwnerId', 'username'),
-      LeadOwnerId_name: safe_dig(record, 'LeadOwnerId', 'name'),
-      LeadOwnerId_active: safe_dig(record, 'LeadOwnerId', 'active'),
-      LeadOwnerId_job: safe_dig(record, 'LeadOwnerId', 'job'),
-      LeadOwnerId_phone: safe_dig(record, 'LeadOwnerId', 'phone'),
-      LeadOwnerId_extension: safe_dig(record, 'LeadOwnerId', 'extension'),
-      LeadOwnerId_last_success_login: parse_date(safe_dig(record, 'LeadOwnerId', 'last_success_login')),
-      Email: decode_html_entities(record['Email']),
-      City: decode_html_entities(record['City']),
-      Address: decode_html_entities(record['Address']),
-      PhoneNumber2: decode_html_entities(record['PhoneNumber2']),
-      Website: decode_html_entities(record['Website']),
-      Fax: decode_html_entities(record['Fax']),
-      WorkStatus_Name: safe_dig(record, 'WorkStatus', 'Name'),
-      FamilyStatus_Name: safe_dig(record, 'FamilyStatus', 'Name'),
-      SoldProperty6Years: safe_dig(record, 'SoldProperty6Years', 'objectId'),
-      PropertyTypeSold_Name: safe_dig(record, 'PropertyTypeSold', 'Name'),
-      AdditionalSellers_Name: safe_dig(record, 'AdditionalSellers', 'Name'),
-      NumberOfHeirs: record['NumberOfHeirs'],
-      AdditionalAsset: safe_dig(record, 'AdditionalAsset', 'objectId'),
-      Comment: decode_html_entities(record['Comment']),
-      Documentation: decode_html_entities(record['Documentation']),
-      IsAccount: record['IsAccount'],
-      updatedBy: safe_dig(record, 'updatedBy', 'objectId'),
-      createdBy: safe_dig(record, 'createdBy', 'objectId'),
-      Number: record['Number'],
-      StatusId: safe_dig(record, 'StatusId', 'objectId'),
-      DocStatus: safe_dig(record, 'DocStatus', 'objectId'),
-      Number2: record['Number2'],
-      Lawyers_Name: safe_dig(record, 'Lawyers', 'Name'),
-      Lawyers_Address: safe_dig(record, 'Lawyers', 'Address'),
-      Lawyers_OwnerId: safe_dig(record, 'Lawyers', 'OwnerId', 'objectId'),
-      Lawyers_PhoneNumber: safe_dig(record, 'Lawyers', 'PhoneNumber'),
-      Lawyers_Description: safe_dig(record, 'Lawyers', 'Description'),
-      Lawyers_OfficePhone: safe_dig(record, 'Lawyers', 'OfficePhone'),
-      Lawyers_Email: safe_dig(record, 'Lawyers', 'Email'),
-      Lawyers_LinkingFactor: safe_dig(record, 'Lawyers', 'LinkingFactor'),
-      Lawyers_Comment: safe_dig(record, 'Lawyers', 'Comment'),
-      Lawyers_StatusLaw: safe_dig(record, 'Lawyers', 'StatusLaw', 'objectId'),
-      LeadStatusId_Name: safe_dig(record, 'LeadStatusId', 'Name'),
-      LeadStatusId_StateId: safe_dig(record, 'LeadStatusId', 'StateId', 'objectId'),
-      DateBecomeCustomer: parse_date(record['DateBecomeCustomer']),
-      ChangedLeadToClient_username: safe_dig(record, 'ChangedLeadToClient', 'username'),
-      ChangedLeadToClient_email: safe_dig(record, 'ChangedLeadToClient', 'email'),
-      ChangedLeadToClient_name: safe_dig(record, 'ChangedLeadToClient', 'name'),
-      ChangedLeadToClient_active: safe_dig(record, 'ChangedLeadToClient', 'active'),
-      ChangedLeadToClient_extension: safe_dig(record, 'ChangedLeadToClient', 'extension'),
-      ChangedLeadToClient_job: safe_dig(record, 'ChangedLeadToClient', 'job'),
-      ChangedLeadToClient_phone: safe_dig(record, 'ChangedLeadToClient', 'phone'),
-      ChangedLeadToClient_last_success_login: parse_date(safe_dig(record, 'ChangedLeadToClient', 'last_success_login')),
-      updatedByTrigger: decode_html_entities(record['updatedByTrigger']),
-      last_details_scraped_at: Time.now
+     
     }
   end
 
