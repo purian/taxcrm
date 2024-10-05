@@ -176,8 +176,14 @@ class FetchSalesDataService
     end
   end
 
-  def parse_date(date_hash)
-    DateTime.parse(date_hash['iso']) if date_hash
+  def parse_date(date_hash)    
+    if date_hash
+      if date_hash['iso'].present?
+        DateTime.parse(date_hash['iso']) 
+      else
+        DateTime.parse(date_hash)
+      end
+    end
   end
 
   def decode_html_entities(value)
@@ -186,7 +192,7 @@ class FetchSalesDataService
 
   def prepare_record(record)
     {
-      objectId: record['objectId'],
+      objectId: decode_html_entities(record.dig('AccountId', 'objectId')),
       Name: decode_html_entities(record['Name']),
       AccNumber: decode_html_entities(record['AccNumber']),
       AccountId_Name: decode_html_entities(record.dig('AccountId', 'Name')),
