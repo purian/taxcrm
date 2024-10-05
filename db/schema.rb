@@ -10,7 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_04_201920) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_05_055405) do
+  create_table "accounting_headers", force: :cascade do |t|
+    t.string "object_id", null: false
+    t.string "object_type", null: false
+    t.string "external_object_id", null: false
+    t.datetime "document_date", precision: nil
+    t.integer "document_number"
+    t.string "doc_type_name"
+    t.string "name"
+    t.decimal "total_sum", precision: 10, scale: 2
+    t.string "email"
+    t.string "file_name"
+    t.string "file_url"
+    t.boolean "file_private"
+    t.datetime "external_created_at", precision: nil
+    t.datetime "external_updated_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["external_object_id"], name: "index_accounting_headers_on_external_object_id", unique: true
+    t.index ["object_type", "object_id"], name: "index_accounting_headers_on_object_type_and_object_id"
+  end
+
   create_table "clients", force: :cascade do |t|
     t.string "objectId"
     t.string "Name"
