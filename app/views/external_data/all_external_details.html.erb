@@ -94,6 +94,26 @@
     .nav-menu a:hover {
       text-decoration: underline;
     }
+
+    .sync-button-container {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .sync-button {
+      background-color: #28a745;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .sync-button:hover {
+      background-color: #218838;
+    }
   </style>
 </head>
 <body>
@@ -106,6 +126,11 @@
 
   <div class="container">
     <h1>כל הפרטים החיצוניים</h1>
+
+    <!-- Add the sync button here -->
+    <div class="sync-button-container">
+      <%= button_to 'סנכרן נתונים למערכת CRM', sync_external_details_path, method: :post, class: 'sync-button', data: { confirm: 'האם אתה בטוח שברצונך לסנכרן את הנתונים?' } %>
+    </div>
 
     <div class="tabs">
       <%= link_to 'פרטים תקפים', all_external_details_path(tab: 'valid'), class: "tab #{@active_tab == 'valid' ? 'active' : ''}" %>

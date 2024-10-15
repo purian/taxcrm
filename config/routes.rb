@@ -17,4 +17,5 @@ Rails.application.routes.draw do
   
   resources :external_data, only: [:index, :create]
   get 'external_data/all_details', to: 'external_data#all_external_details', as: 'all_external_details'
+  post 'sync_external_details', to: 'external_details#sync_to_crm'
 end
