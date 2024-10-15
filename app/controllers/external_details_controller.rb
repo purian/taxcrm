@@ -1,26 +1,29 @@
+require 'net/http'
+require 'uri'
+require 'json'
+
 class ExternalDetailsController < ApplicationController
   def sync_to_crm
-    # Query for valid external details that haven't been synced yet
+    Rails.logger.debug "Starting sync_to_crm process"
     details_to_sync = ExternalDetail.where(is_valid: true, sync_at: nil)
+    Rails.logger.debug "Found #{details_to_sync.count} details to sync"
 
+    crm_service = CrmSyncService.new
+    Rails.logger.debug "Created CrmSyncService instance"
+
+    synced_count = 0
     details_to_sync.each do |detail|
-      # TODO: Implement the actual CRM sync logic here
-      # For now, we'll just update the sync_at timestamp
-      # Replace this with your actual CRM sync code when ready
-      if sync_to_crm_system(detail)
+      Rails.logger.debug "Attempting to sync detail ID: #{detail.id}"
+      if crm_service.sync_detail(detail)
         detail.update(sync_at: Time.current)
+        synced_count += 1
+        Rails.logger.debug "Successfully synced and updated detail ID: #{detail.id}"
+      else
+        Rails.logger.debug "Failed to sync detail ID: #{detail.id}"
       end
     end
 
-    redirect_to all_external_details_path, notice: "Sync process completed. #{details_to_sync.count} records were processed."
-  end
-
-  private
-
-  def sync_to_crm_system(detail)
-    # TODO: Implement the actual CRM sync logic here
-    # This method should return true if the sync was successful, false otherwise
-    # For now, we'll just return true as a placeholder
-    true
+    Rails.logger.debug "Sync process completed. Synced count: #{synced_count}"
+    redirect_to all_external_details_path, notice: "Sync process completed. #{synced_count} out of #{details_to_sync.count} records were successfully synced."
   end
 end
