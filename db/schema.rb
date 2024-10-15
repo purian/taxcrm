@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_05_055405) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_15_054147) do
   create_table "accounting_headers", force: :cascade do |t|
     t.string "object_id", null: false
     t.string "object_type", null: false
@@ -118,6 +118,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_05_055405) do
     t.boolean "is_valid", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "sync_at"
     t.index ["object_id", "object_type"], name: "index_external_details_on_object_id_and_object_type"
   end
 
