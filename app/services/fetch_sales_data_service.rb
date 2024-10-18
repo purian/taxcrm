@@ -49,7 +49,15 @@ class FetchSalesDataService
       sleep 2
     end
 
-    Sale.upsert_all(records, unique_by: :objectId) unless records.empty?
+    unless records.empty?
+      # Remove duplicates based on objectId
+      unique_records = records.uniq { |record| record[:objectId] }
+      
+      # Perform upsert in smaller batches
+      unique_records.each_slice(100) do |batch|
+        Sale.upsert_all(batch, unique_by: :objectId)
+      end
+    end
   end
 
   def fetch_and_update_sale_details
