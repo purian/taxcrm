@@ -1,0 +1,52 @@
+class AddMissingColumnsToSales < ActiveRecord::Migration[7.1]
+    def change
+      add_column :sales, :NextNote, :datetime
+      add_column :sales, :WorkStatus_Name, :string
+      add_column :sales, :FamilyStatus_Name, :string
+      add_column :sales, :AdditionalSellers_Name, :string
+      add_column :sales, :Number, :integer
+      add_column :sales, :AccountIsHanicapped_Name, :string
+      add_column :sales, :KidsUnder18_Name, :string
+      add_column :sales, :LeadStatusId_Name, :string
+      add_column :sales, :LeadStatusId_StateId, :string
+      add_column :sales, :AcademicDetails, :text
+      add_column :sales, :AlimonyDetails, :text
+      add_column :sales, :ArmyDischargeDetails, :text
+      add_column :sales, :DonationDetails, :text
+      add_column :sales, :FamilyDisabilityDetails, :text
+      add_column :sales, :HospitalDetails, :text
+      add_column :sales, :ImmigrationCardDetails, :text
+      add_column :sales, :NotWorkingDetails, :text
+      add_column :sales, :PensionDepositDetails, :text
+      add_column :sales, :PensionDetails, :text
+      add_column :sales, :ReservesDetails, :text
+      add_column :sales, :SecuritiesDetails, :text
+      add_column :sales, :UnemploymentFeeDetails, :text
+      add_column :sales, :HandicappedDetails, :text
+      add_column :sales, :TaxType_Name, :string
+      add_column :sales, :Campaign, :string
+      add_column :sales, :AddressOfSale, :string
+      add_column :sales, :AverageIncome, :string
+      add_column :sales, :AverageIncomePartner, :string
+      add_column :sales, :DivorceYear, :string
+      add_column :sales, :YearOfSale, :string
+      add_column :sales, :Lawyers_Name, :string
+      add_column :sales, :Lawyers_Address, :string
+      add_column :sales, :Lawyers_OwnerId, :string
+      add_column :sales, :Lawyers_PhoneNumber, :string
+      add_column :sales, :Lawyers_Description, :text
+      add_column :sales, :Lawyers_OfficePhone, :string
+      add_column :sales, :Lawyers_Email, :string
+      add_column :sales, :Lawyers_LinkingFactor, :string
+      add_column :sales, :Lawyers_Comment, :text
+      add_column :sales, :Lawyers_StatusLaw, :string
+      add_column :sales, :ChangedLeadToClient_username, :string
+      add_column :sales, :ChangedLeadToClient_email, :string
+      add_column :sales, :ChangedLeadToClient_name, :string
+      add_column :sales, :ChangedLeadToClient_active, :boolean
+      add_column :sales, :ChangedLeadToClient_extension, :string
+      add_column :sales, :ChangedLeadToClient_job, :string
+      add_column :sales, :ChangedLeadToClient_phone, :string
+      add_column :sales, :ChangedLeadToClient_last_success_login, :datetime
+    end
+  end
