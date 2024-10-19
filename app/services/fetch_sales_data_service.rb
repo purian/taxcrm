@@ -24,6 +24,7 @@ class FetchSalesDataService
     email = 'benamram119@walla.com'
     password = 'Gg198666'
     @token = AuthenticationService.fetch_token(email, password)
+    @errors = [] # Initialize an array to collect errors
   end
 
   def call
@@ -32,6 +33,12 @@ class FetchSalesDataService
     fetch_and_update_sale_details
     fetch_and_update_accounting_headers
     Rails.logger.info "Completed FetchSalesDataService at #{Time.now}"
+    
+    # Print all collected errors at the end
+    unless @errors.empty?
+      Rails.logger.error "Errors encountered during the process:"
+      @errors.each { |error| Rails.logger.error error }
+    end
   end
 
   private
@@ -71,12 +78,18 @@ class FetchSalesDataService
           body: sale_detail_request_body(sale.objectId).to_json
         )
         
-        sale_details = response.parsed_response['results'].first
-        if sale_details
-          Rails.logger.info "Updating sale #{sale.objectId} with new details at #{Time.now}"
-          sale.update(prepare_sale_record(sale_details))
+        if response.parsed_response['results'].nil?
+          error_message = "Unexpected response for sale #{sale.objectId}: #{response.inspect}"
+          Rails.logger.error error_message
+          @errors << error_message
         else
-          Rails.logger.warn "No details found for sale #{sale.objectId} at #{Time.now}"
+          sale_details = response.parsed_response['results'].first
+          if sale_details
+            Rails.logger.info "Updating sale #{sale.objectId} with new details at #{Time.now}"
+            sale.update(prepare_sale_record(sale_details))
+          else
+            Rails.logger.warn "No details found for sale #{sale.objectId} at #{Time.now}"
+          end
         end
       rescue Net::OpenTimeout, Net::ReadTimeout => e
         retries += 1
@@ -85,8 +98,14 @@ class FetchSalesDataService
           sleep 2
           retry
         else
-          Rails.logger.error "Failed to fetch details for sale #{sale.objectId} after 10 attempts: #{e.message}"
+          error_message = "Failed to fetch details for sale #{sale.objectId} after 10 attempts: #{e.message}"
+          Rails.logger.error error_message
+          @errors << error_message
         end
+      rescue StandardError => e
+        error_message = "Unexpected error for sale #{sale.objectId}: #{e.message}"
+        Rails.logger.error error_message
+        @errors << error_message
       end
     end
   end
