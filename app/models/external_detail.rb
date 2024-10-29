@@ -1,3 +1,21 @@
+# == Schema Information
+#
+# Table name: external_details
+#
+#  id           :integer          not null, primary key
+#  comment      :string
+#  is_valid     :boolean          default(TRUE)
+#  object_type  :string           not null
+#  phone_number :string
+#  sync_at      :datetime
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
+#  object_id    :string           not null
+#
+# Indexes
+#
+#  index_external_details_on_object_id_and_object_type  (object_id,object_type)
+#
 class ExternalDetail < ApplicationRecord
   belongs_to :lead, foreign_key: :object_id, primary_key: :objectId, optional: true
   belongs_to :client, foreign_key: :object_id, primary_key: :objectId, optional: true

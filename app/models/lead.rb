@@ -3,64 +3,68 @@
 # Table name: leads
 #
 #  id                       :integer          not null, primary key
-#  objectId                 :string
-#  Name                     :string
-#  Email                    :string
-#  PhoneNumber              :string
-#  LeadStatusId_Name        :string
-#  LeadOwnerId_name         :string
-#  IsAccount                :boolean
-#  created_at               :datetime         not null
-#  updated_at               :datetime         not null
-#  CompanyId                :string
-#  Number                   :string
-#  Documentation            :text
-#  SourceList               :text
-#  PraiseTax                :string
-#  Lawyers_Name             :string
-#  Website                  :string
-#  LeadOwnerId_objectId     :string
-#  LeadOwnerId_username     :string
-#  LeadOwnerId_active       :boolean
-#  LeadOwnerId_job          :string
-#  LeadOwnerId_phone        :string
-#  LeadOwnerId_extension    :string
-#  PhoneNumber2             :string
-#  Fax                      :string
-#  State                    :string
-#  City                     :string
-#  Address                  :string
-#  Comment                  :text
-#  Heirs                    :boolean
 #  AcademicDetails          :text
+#  Address                  :string
+#  AddressOfSale            :string
 #  AlimonyDetails           :text
 #  ArmyDischargeDetails     :text
-#  DonationDetails          :text
-#  FamilyDisabilityDetails  :text
-#  HandicappedDetails       :text
-#  HospitalDetails          :text
-#  ImmigrationCardDetails   :text
-#  NotWorkingDetails        :text
-#  PensionDepositDetails    :text
-#  PensionDetails           :text
-#  ReservesDetails          :text
-#  SecuritiesDetails        :text
-#  UnemploymentFeeDetails   :text
-#  LeadStatusId_objectId    :string
-#  TaxType_objectId         :string
-#  TaxType_Name             :string
-#  Number2                  :integer
-#  Campaign                 :string
-#  AddressOfSale            :string
 #  AverageIncome            :string
 #  AverageIncomePartner     :string
+#  Campaign                 :string
+#  City                     :string
+#  Comment                  :text
+#  CompanyId                :string
 #  DivorceYear              :string
-#  YearOfSale               :string
-#  SpouseID                 :string
+#  Documentation            :text
+#  DonationDetails          :text
+#  Email                    :string
+#  FamilyDisabilityDetails  :text
+#  Fax                      :string
+#  HandicappedDetails       :text
+#  Heirs                    :boolean
+#  HospitalDetails          :text
+#  ImmigrationCardDetails   :text
+#  IsAccount                :boolean
+#  Lawyers_Name             :string
+#  LeadOwnerId_active       :boolean
+#  LeadOwnerId_extension    :string
+#  LeadOwnerId_job          :string
+#  LeadOwnerId_name         :string
+#  LeadOwnerId_objectId     :string
+#  LeadOwnerId_phone        :string
+#  LeadOwnerId_username     :string
+#  LeadStatusId_Name        :string
+#  LeadStatusId_objectId    :string
+#  Name                     :string
 #  NextNote                 :datetime
-#  last_details_scraped_at  :datetime
-#  YearOfSaleNew            :string
+#  NotWorkingDetails        :text
+#  Number                   :string
+#  Number2                  :integer
+#  PensionDepositDetails    :text
+#  PensionDetails           :text
+#  PhoneNumber              :string
+#  PhoneNumber2             :string
+#  PraiseTax                :string
+#  ReservesDetails          :text
+#  SecuritiesDetails        :text
+#  SourceList               :text
+#  SpouseID                 :string
+#  State                    :string
+#  TaxType_Name             :string
+#  TaxType_objectId         :string
+#  UnemploymentFeeDetails   :text
+#  Website                  :string
 #  Whenwasthepropertybought :string
+#  YearOfSale               :string
+#  YearOfSaleNew            :string
+#  last_details_scraped_at  :datetime
+#  objectId                 :string
+#  created_at               :datetime         not null
+#  updated_at               :datetime         not null
+#
+# Indexes
+#
+#  index_leads_on_objectId  (objectId) UNIQUE
 #
 class Lead < ApplicationRecord
   include DecodeHtmlEntities
