@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_30_183242) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_30_214842) do
   create_table "accounting_headers", force: :cascade do |t|
     t.string "object_id", null: false
     t.string "object_type", null: false
@@ -210,6 +210,63 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_30_183242) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "real_sales", force: :cascade do |t|
+    t.integer "sale_id"
+    t.datetime "closing_date"
+    t.datetime "cpa_date"
+    t.datetime "cpa_followup_date"
+    t.datetime "next_step_date"
+    t.datetime "refun_tax_made_date"
+    t.string "cpa_name_id"
+    t.string "cpa_owner_id"
+    t.string "owner_id"
+    t.string "owner_username"
+    t.string "owner_name"
+    t.boolean "owner_active"
+    t.string "owner_job"
+    t.string "owner_phone"
+    t.string "owner_extension"
+    t.datetime "owner_last_success_login"
+    t.string "sale_email"
+    t.string "sale_landline"
+    t.string "sale_mobile"
+    t.decimal "total", precision: 10, scale: 2
+    t.decimal "total_before_discount", precision: 10, scale: 2
+    t.decimal "discount", precision: 10, scale: 2
+    t.string "discount_type"
+    t.decimal "discount_value", precision: 10, scale: 2
+    t.decimal "est_refund", precision: 10, scale: 2
+    t.boolean "invoice_issued", default: false
+    t.text "cpa_chat"
+    t.text "all_extra_info"
+    t.string "pakid_shoma_id"
+    t.string "pakid_shoma_name"
+    t.boolean "signed_sms", default: false
+    t.string "lawyer_id"
+    t.string "lawyer_name"
+    t.string "lawyer_address"
+    t.string "lawyer_owner_id"
+    t.string "lawyer_phone_number"
+    t.text "lawyer_description"
+    t.string "lawyer_office_phone"
+    t.string "lawyer_email"
+    t.string "lawyer_linking_factor"
+    t.text "lawyer_comment"
+    t.string "lawyer_status_law"
+    t.string "sale_status_id"
+    t.string "sale_status_name"
+    t.integer "sale_status_probability"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cpa_name_id"], name: "index_real_sales_on_cpa_name_id"
+    t.index ["cpa_owner_id"], name: "index_real_sales_on_cpa_owner_id"
+    t.index ["lawyer_id"], name: "index_real_sales_on_lawyer_id"
+    t.index ["owner_id"], name: "index_real_sales_on_owner_id"
+    t.index ["pakid_shoma_id"], name: "index_real_sales_on_pakid_shoma_id"
+    t.index ["sale_id"], name: "index_real_sales_on_sale_id"
+    t.index ["sale_status_id"], name: "index_real_sales_on_sale_status_id"
+  end
+
   create_table "referrals", force: :cascade do |t|
     t.string "objectId"
     t.string "Name"
@@ -406,4 +463,5 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_30_183242) do
     t.index ["object_id_value"], name: "index_time_lines_on_object_id_value"
   end
 
+  add_foreign_key "real_sales", "sales"
 end
