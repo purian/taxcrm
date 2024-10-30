@@ -23,6 +23,8 @@
 #  lawyer_phone_number      :string
 #  lawyer_status_law        :string
 #  next_step_date           :datetime
+#  objectId                 :string
+#  objectIdValue            :string
 #  owner_active             :boolean
 #  owner_extension          :string
 #  owner_job                :string
@@ -56,6 +58,8 @@
 #  index_real_sales_on_cpa_name_id     (cpa_name_id)
 #  index_real_sales_on_cpa_owner_id    (cpa_owner_id)
 #  index_real_sales_on_lawyer_id       (lawyer_id)
+#  index_real_sales_on_objectId        (objectId)
+#  index_real_sales_on_objectIdValue   (objectIdValue)
 #  index_real_sales_on_owner_id        (owner_id)
 #  index_real_sales_on_pakid_shoma_id  (pakid_shoma_id)
 #  index_real_sales_on_sale_id         (sale_id)
