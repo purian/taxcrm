@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_30_231042) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_31_231442) do
   create_table "accounting_headers", force: :cascade do |t|
     t.string "object_id", null: false
     t.string "object_type", null: false
@@ -260,6 +260,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_30_231042) do
     t.datetime "updated_at", null: false
     t.string "objectId"
     t.string "objectIdValue"
+    t.text "account_comment"
+    t.string "cpa_name_text"
+    t.string "cap_status_name"
+    t.datetime "submission_date"
     t.index ["cpa_name_id"], name: "index_real_sales_on_cpa_name_id"
     t.index ["cpa_owner_id"], name: "index_real_sales_on_cpa_owner_id"
     t.index ["lawyer_id"], name: "index_real_sales_on_lawyer_id"
