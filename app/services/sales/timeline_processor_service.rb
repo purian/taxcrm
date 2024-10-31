@@ -134,29 +134,31 @@ module Sales
     end
 
     def create_real_sale(timeline_item, sale_data)
-      @sale.real_sales.create!(
-        objectId: sale_data['objectId'],
-        objectIdValue: timeline_item['objectIdValue'],
+      @sale.real_sales.find_or_create_by(
+        sale_id: @sale.id,
+        objectIdValue: timeline_item['objectIdValue']
+      ) do |real_sale|
+        real_sale.objectId = sale_data['objectId']
         
         # Existing fields
-        closing_date: parse_date(sale_data.dig('ClosingDate', 'iso')),
-        cpa_date: parse_date(sale_data.dig('CPADate', 'iso')),
-        cpa_followup_date: parse_date(sale_data.dig('CPAFollowupDate', 'iso')),
-        next_step_date: parse_date(sale_data.dig('NextStepDate', 'iso')),
+        real_sale.closing_date = parse_date(sale_data.dig('ClosingDate', 'iso'))
+        real_sale.cpa_date = parse_date(sale_data.dig('CPADate', 'iso'))
+        real_sale.cpa_followup_date = parse_date(sale_data.dig('CPAFollowupDate', 'iso'))
+        real_sale.next_step_date = parse_date(sale_data.dig('NextStepDate', 'iso'))
         
         # CPA and Sales related
-        cpa_name_id: sale_data.dig('CPAName', 'objectId'),
-        cpa_owner_id: sale_data.dig('CpaOwnerId', 'objectId'),
-        owner_id: sale_data.dig('OwnerId', 'objectId'),
-        owner_username: sale_data.dig('OwnerId', 'username'),
+        real_sale.cpa_name_id = sale_data.dig('CPAName', 'objectId')
+        real_sale.cpa_owner_id = sale_data.dig('CpaOwnerId', 'objectId')
+        real_sale.owner_id = sale_data.dig('OwnerId', 'objectId')
+        real_sale.owner_username = sale_data.dig('OwnerId', 'username')
         
         # Sale status details
-        sale_status_id: sale_data.dig('SaleStatusId', 'objectId'),
-        sale_status_name: sale_data.dig('SaleStatusId', 'Name'),
-        sale_status_probability: sale_data.dig('SaleStatusId', 'Probability'),
+        real_sale.sale_status_id = sale_data.dig('SaleStatusId', 'objectId')
+        real_sale.sale_status_name = sale_data.dig('SaleStatusId', 'Name')
+        real_sale.sale_status_probability = sale_data.dig('SaleStatusId', 'Probability')
         
         # ... other fields mapping
-      )
+      end
     end
 
     def parse_date(date_string)
