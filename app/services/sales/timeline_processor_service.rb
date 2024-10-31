@@ -3,14 +3,25 @@ module Sales
     include HTTParty
     base_uri 'https://api-4.mbapps.co.il'
 
+    MAX_RETRIES = 3
+
     def initialize(sale)
       @sale = sale
+      @retry_count = 0
       authenticate!
     end
 
     def process
       timeline_data = fetch_timeline_data
       process_sales_from_timeline(timeline_data)
+    rescue => e
+      if e.message.include?('text') && @retry_count < MAX_RETRIES
+        @retry_count += 1
+        authenticate!
+        retry
+      else
+        raise e
+      end
     end
 
     private
@@ -47,6 +58,14 @@ module Sales
       )
       
       handle_response(response)
+    rescue => e
+      if @retry_count < MAX_RETRIES
+        @retry_count += 1
+        authenticate!
+        retry
+      else
+        raise e
+      end
     end
 
     def fetch_sale_details(sale_id)
