@@ -1,15 +1,20 @@
 namespace :sales do
   desc "Process timeline data for all sales"
   task process_timeline: :environment do
-    Sale.find_each(batch_size: 100) do |sale|
-      next unless sale.real_sales.empty?
+    batch_size = 50
+    delay_between_batches = 120 # 5 minutes
+
+    Sale.find_each(batch_size: batch_size) do |sale|
       begin
         sale.process_timeline
         puts "Processed timeline for Sale ID: #{sale.id}"
       rescue => e
         puts "Error processing Sale ID: #{sale.id} - #{e.message}"
-      ensure
-        sleep(2) # Add a small delay between requests
+      end
+      
+      if (sale.id % batch_size) == 0
+        puts "Sleeping for #{delay_between_batches} seconds between batches..."
+        sleep(delay_between_batches)
       end
     end
   end

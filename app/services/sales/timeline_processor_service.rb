@@ -3,7 +3,9 @@ module Sales
     include HTTParty
     base_uri 'https://api-4.mbapps.co.il'
 
+    DELAY_BETWEEN_REQUESTS = 3 # seconds
     MAX_RETRIES = 3
+    RETRY_DELAY = 300 # seconds when hitting rate limit
 
     def initialize(sale)
       @sale = sale
@@ -14,17 +16,43 @@ module Sales
     def process
       timeline_data = fetch_timeline_data
       process_sales_from_timeline(timeline_data)
-    rescue => e
-      if e.message.include?('text') && @retry_count < MAX_RETRIES
-        @retry_count += 1
-        authenticate!
-        retry
-      else
-        raise e
-      end
     end
 
     private
+
+    def fetch_timeline_data
+      begin
+        sleep(DELAY_BETWEEN_REQUESTS) # Add delay before each request
+        response = self.class.post('/parse/classes/_Timeline',
+          headers: auth_headers,
+          body: timeline_request_body.to_json
+        )
+        
+        if response.code == 429 # Too Many Requests
+          handle_rate_limit
+        else
+          handle_response(response)
+        end
+      rescue => e
+        if @retry_count < MAX_RETRIES
+          @retry_count += 1
+          sleep(RETRY_DELAY)
+          retry
+        else
+          raise e
+        end
+      end
+    end
+
+    def handle_rate_limit
+      if @retry_count < MAX_RETRIES
+        @retry_count += 1
+        sleep(RETRY_DELAY)
+        fetch_timeline_data # Retry the request
+      else
+        raise ApiError, "Rate limit exceeded after #{MAX_RETRIES} retries"
+      end
+    end
 
     def authenticate!
       email = 'benamram119@walla.com'
@@ -49,23 +77,6 @@ module Sales
         _InstallationId: '9f63e5c7-8d7c-fa3b-24af-f910a1560651',
         _SessionToken: @token
       }
-    end
-
-    def fetch_timeline_data
-      response = self.class.post('/parse/classes/_Timeline',
-        headers: auth_headers,
-        body: timeline_request_body.to_json
-      )
-      
-      handle_response(response)
-    rescue => e
-      if @retry_count < MAX_RETRIES
-        @retry_count += 1
-        authenticate!
-        retry
-      else
-        raise e
-      end
     end
 
     def fetch_sale_details(sale_id)
