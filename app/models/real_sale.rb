@@ -3,11 +3,14 @@
 # Table name: real_sales
 #
 #  id                       :integer          not null, primary key
+#  account_comment          :text
 #  all_extra_info           :text
+#  cap_status_name          :string
 #  closing_date             :datetime
 #  cpa_chat                 :text
 #  cpa_date                 :datetime
 #  cpa_followup_date        :datetime
+#  cpa_name_text            :string
 #  discount                 :decimal(10, 2)
 #  discount_type            :string
 #  discount_value           :decimal(10, 2)
@@ -40,6 +43,7 @@
 #  sale_status_name         :string
 #  sale_status_probability  :integer
 #  signed_sms               :boolean          default(FALSE)
+#  submission_date          :datetime
 #  total                    :decimal(10, 2)
 #  total_before_discount    :decimal(10, 2)
 #  created_at               :datetime         not null
@@ -72,5 +76,33 @@
 class RealSale < ApplicationRecord
   belongs_to :sale
 
-  validates :sale, presence: true
+  # Validations
+  validates :objectId, presence: true, uniqueness: true
+  validates :objectIdValue, presence: true
+  validates :est_refund, numericality: { allow_nil: true }
+  
+  # Callbacks
+  before_save :sanitize_text_fields
+  
+  private
+
+  def sanitize_text_fields
+    self.account_comment = sanitize_text(account_comment)
+    self.cpa_chat = sanitize_text(cpa_chat)
+    self.cpa_name_text = sanitize_text(cpa_name_text)
+    self.cap_status_name = sanitize_text(cap_status_name)
+  end
+
+  def sanitize_text(text)
+    return nil if text.blank?
+    
+    # Convert HTML entities
+    text = CGI.unescapeHTML(text.to_s)
+    
+    # Remove potential XSS/script tags
+    text = ActionController::Base.helpers.sanitize(text, tags: [])
+    
+    # Normalize whitespace
+    text.strip.gsub(/\s+/, ' ')
+  end
 end
