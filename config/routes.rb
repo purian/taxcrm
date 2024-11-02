@@ -20,14 +20,7 @@ Rails.application.routes.draw do
   post 'sync_external_details', to: 'external_details#sync_to_crm'
 
   resources :real_sales do
-    collection do
-      get :dashboard    # For the traffic light dashboard view
-      get :analytics   # For more detailed analytics if needed
-    end
-    
-    member do
-      get :timeline    # For individual sale timeline
-    end
+    get :dashboard, on: :collection
   end
 
   # You might also want these nested routes

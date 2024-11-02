@@ -6,28 +6,15 @@ class RealSalesController < ApplicationController
   end
 
   def dashboard
-    @real_sales = if params[:sale_id]
-      Sale.find(params[:sale_id]).real_sales
-    else
-      RealSale.all
-    end
-
-    @overdue_sales = @real_sales.where('next_step_date < ?', Date.current)
-    @today_sales = @real_sales.where('DATE(next_step_date) = ?', Date.current)
-    @upcoming_sales = @real_sales.where('next_step_date > ?', Date.current)
-    
-    # Add counts for quick statistics
     @statistics = {
-      total: @real_sales.count,
-      overdue: @overdue_sales.count,
-      today: @today_sales.count,
-      upcoming: @upcoming_sales.count
+      overdue: RealSale.where('next_step_date < ?', Date.current).count,
+      today: RealSale.where('DATE(next_step_date) = ?', Date.current).count,
+      upcoming: RealSale.where('next_step_date > ?', Date.current).count,
+      no_date: RealSale.where(next_step_date: nil).count
     }
 
-    respond_to do |format|
-      format.html
-      format.json { render json: @statistics }
-    end
+    @status = params[:status] || 'overdue'
+    @sales = fetch_sales_by_status(@status)
   end
 
   def analytics
@@ -70,5 +57,24 @@ class RealSalesController < ApplicationController
 
   def set_real_sale
     @real_sale = RealSale.find(params[:id])
+  end
+
+  def fetch_sales_by_status(status)
+    case status
+    when 'overdue'
+      RealSale.where('next_step_date < ?', Date.current)
+              .order(next_step_date: :asc)
+    when 'today'
+      RealSale.where('DATE(next_step_date) = ?', Date.current)
+              .order(next_step_date: :asc)
+    when 'upcoming'
+      RealSale.where('next_step_date > ?', Date.current)
+              .order(next_step_date: :asc)
+    when 'no_date'
+      RealSale.where(next_step_date: nil)
+              .order(created_at: :desc)
+    else
+      RealSale.none
+    end
   end
 end

@@ -1,35 +1,66 @@
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
-  <!-- Overdue -->
-  <div class="bg-red-100 p-4 rounded-lg">
-    <h3 class="text-red-700 font-bold mb-2">Overdue</h3>
-    <% @real_sales.select { |rs| rs.next_step_date&.to_date.present? && rs.next_step_date.to_date < Date.current }.each do |real_sale| %>
-      <div class="mb-2">
-        <%= next_step_status_icon(real_sale.next_step_date) %>
-        <%= real_sale.next_step_date.strftime('%Y-%m-%d') %>
-        (<%= (Date.current - real_sale.next_step_date.to_date).to_i %> days overdue)
+<div class="container mx-auto p-4">
+  <!-- Statistics Summary -->
+  <div class="grid grid-cols-4 gap-4 mb-6">
+    <% @statistics.each do |status, count| %>
+      <div class="bg-white p-4 rounded-lg shadow text-center">
+        <div class="text-2xl font-bold"><%= count %></div>
+        <div class="text-gray-600"><%= status.to_s.titleize %></div>
       </div>
     <% end %>
   </div>
 
-  <!-- Due Today -->
-  <div class="bg-yellow-100 p-4 rounded-lg">
-    <h3 class="text-yellow-700 font-bold mb-2">Due Today</h3>
-    <% @real_sales.select { |rs| rs.next_step_date&.to_date == Date.current }.each do |real_sale| %>
-      <div class="mb-2">
-        <%= next_step_status_icon(real_sale.next_step_date) %>
-        <%= real_sale.next_step_date.strftime('%Y-%m-%d') %>
-      </div>
-    <% end %>
+  <!-- Tabs -->
+  <div class="mb-4">
+    <div class="border-b border-gray-200">
+      <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+        <% [
+          ['overdue', '🔴'],
+          ['today', '🟡'],
+          ['upcoming', '🟢'],
+          ['no_date', '⚪']
+        ].each do |status, icon| %>
+          <%= link_to dashboard_real_sales_path(status: status),
+              class: "group inline-flex items-center px-1 py-4 border-b-2 font-medium text-sm
+                     #{@status == status ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}" do %>
+            <span class="text-xl mr-2"><%= icon %></span>
+            <%= status.titleize %> (<%= @statistics[status.to_sym] %>)
+          <% end %>
+        <% end %>
+      </nav>
+    </div>
   </div>
 
-  <!-- Upcoming -->
-  <div class="bg-green-100 p-4 rounded-lg">
-    <h3 class="text-green-700 font-bold mb-2">Upcoming</h3>
-    <% @real_sales.select { |rs| rs.next_step_date&.to_date.present? && rs.next_step_date.to_date > Date.current }.each do |real_sale| %>
-      <div class="mb-2">
-        <%= next_step_status_icon(real_sale.next_step_date) %>
-        <%= real_sale.next_step_date.strftime('%Y-%m-%d') %>
-        (in <%= (real_sale.next_step_date.to_date - Date.current).to_i %> days)
+  <!-- Sales Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <% if @sales.any? %>
+      <% @sales.each do |sale| %>
+        <div class="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow border-l-4 border-<%= status_color(@status) %>-500">
+          <div class="font-semibold">
+            <%= link_to sale.sale_id, real_sale_path(sale), 
+                class: "text-#{status_color(@status)}-600 hover:text-#{status_color(@status)}-800" %>
+          </div>
+          
+          <% if sale.next_step_date.present? %>
+            <div class="text-sm text-gray-600">
+              Due: <%= sale.next_step_date.strftime('%Y-%m-%d') %>
+              <%= render_due_date_text(sale, @status) %>
+            </div>
+          <% end %>
+          
+          <div class="text-sm text-gray-500 truncate">
+            <%= sale.owner_name || 'No owner' %>
+          </div>
+          
+          <% if @status == 'no_date' %>
+            <div class="text-sm text-gray-400">
+              Created: <%= time_ago_in_words(sale.created_at) %> ago
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="col-span-3 text-center text-gray-500 py-8">
+        No <%= @status.humanize.downcase %> sales found
       </div>
     <% end %>
   </div>
