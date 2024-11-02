@@ -256,6 +256,10 @@ class Sale < ApplicationRecord
     end
   end
 
+  def process_timeline
+    Sales::TimelineProcessorService.new(self).process
+  end
+
   class << self
     def request_headers
       HEADERS.merge('X-Parse-Session-Token' => AuthenticationService.fetch_token('benamram119@walla.com', 'Gg198666'))
