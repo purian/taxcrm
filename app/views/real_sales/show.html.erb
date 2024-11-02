@@ -5,18 +5,17 @@
     </div>
   <% end %>
 <% else %>
-  <div class="container mx-auto p-6 bg-gray-50 min-h-screen">
+  <div class="container mx-auto p-6 bg-gray-50 min-h-screen" dir="rtl">
     <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
       <%# Header Section %>
       <div class="bg-gradient-to-r from-blue-600 to-blue-800 p-6">
         <div class="flex justify-between items-center">
           <h1 class="text-3xl font-bold text-white">
-            Sale Details - <%= @real_sale.sale_id %>
+            <%= @real_sale.sale_id %> - פרטי מכירה
           </h1>
           <%= link_to dashboard_real_sales_path, 
               class: "px-4 py-2 bg-white text-blue-700 rounded-lg hover:bg-blue-50 transition duration-150 ease-in-out flex items-center gap-2" do %>
-          
-            <span>Back to Dashboard</span>
+            <span>חזרה ללוח בקרה</span>
           <% end %>
         </div>
       </div>
@@ -31,20 +30,35 @@
                   <%= attr_name.titleize %>
                 </dt>
                 <dd class="text-base text-gray-900">
-                  <% if ['created_at', 'updated_at'].include?(attr_name) %>
-                    <div class="flex items-center gap-2">
-                      <span class="font-medium"><%= value.strftime('%Y-%m-%d %H:%M:%S') %></span>
-                      <span class="text-sm text-gray-500 bg-gray-200 px-2 py-1 rounded">
-                        <%= time_ago_in_words(value) %> ago
-                      </span>
-                    </div>
-                  <% elsif attr_name == 'next_step_date' %>
-                    <div class="flex items-center gap-2">
-                      <span class="font-medium"><%= value.strftime('%Y-%m-%d') %></span>
-                      <span class="text-sm text-gray-500 bg-gray-200 px-2 py-1 rounded">
-                        <%= distance_of_time_in_words(value, Date.current) %> 
-                        <%= value > Date.current ? 'from now' : 'ago' %>
-                      </span>
+                  <% if attr_name == 'cpa_chat' && value.present? %>
+                    <div class="overflow-x-auto shadow-sm rounded-lg border-2 border-gray-300">
+                      <table class="min-w-full divide-y-2 divide-gray-300 border-collapse">
+                        <thead class="bg-gray-50">
+                          <tr class="border-b-2 border-gray-300">
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-x-2 border-gray-300">תאריך ושעה</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-x-2 border-gray-300">שם</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-x-2 border-gray-300">הודעה</th>
+                          </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-300">
+                          <% messages = value.scan(/(\S+)\s+(\d{1,2}\.\d{1,2}\.\d{4},\s+\d{1,2}:\d{2}:\d{2}):\s+(.+?)(?=\s*\S+\s+\d{1,2}\.\d{1,2}\.\d{4}|$)/m) %>
+                          <% messages.each do |name, datetime, content| %>
+                            <tr class="hover:bg-gray-50 transition-colors duration-200">
+                              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right border-x-2 border-gray-300">
+                                <%= datetime %>
+                              </td>
+                              <td class="px-6 py-4 text-sm text-gray-900 text-right border-x-2 border-gray-300">
+                                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
+                                  <%= name %>
+                                </span>
+                              </td>
+                              <td class="px-6 py-4 text-sm text-gray-900 text-right border-x-2 border-gray-300">
+                                <%= content.strip %>
+                              </td>
+                            </tr>
+                          <% end %>
+                        </tbody>
+                      </table>
                     </div>
                   <% else %>
                     <span class="font-medium"><%= value %></span>
