@@ -11,11 +11,8 @@ class RealSalesController < ApplicationController
     # Base query for the main list
     @sales = RealSale.all
     
-    # Base query for status counts (unfiltered)
-    @real_sales = RealSale.all
-    
-    # Apply main tab filter to @sales
-    @sales = case @status
+    # Apply main tab filter (store in a separate variable for count calculations)
+    @tab_filtered_sales = case @status
       when 'overdue'
         @sales.where('next_step_date < ?', Date.current)
       when 'today'
@@ -26,12 +23,15 @@ class RealSalesController < ApplicationController
         @sales.where(next_step_date: nil)
     end
     
+    # Set @sales to include both tab and status filters
+    @sales = @tab_filtered_sales
+    
     # Apply sale status filter if present
     if params[:sale_status].present?
       @sales = @sales.where(sale_status_name: params[:sale_status].gsub('&#34;', "'"))
     end
     
-    # Calculate statistics for tabs
+    # Calculate statistics for main tabs
     @statistics = {
       overdue: RealSale.where('next_step_date < ?', Date.current).count,
       today: RealSale.where('DATE(next_step_date) = ?', Date.current).count,
@@ -39,15 +39,15 @@ class RealSalesController < ApplicationController
       no_date: RealSale.where(next_step_date: nil).count
     }
     
-    # Get unique sale statuses for the sub-navigation
+    # Get unique sale statuses
     @sale_statuses = RealSale.distinct
                             .pluck(:sale_status_name)
                             .compact
                             .map { |status| status.gsub('&#34;', "'") }
                             
-    # Calculate counts for each sale status based on the current tab
+    # Calculate counts for each sale status based on the current tab only
     @status_counts = @sale_statuses.each_with_object({}) do |status, hash|
-      hash[status] = @sales.where(sale_status_name: status).count
+      hash[status] = @tab_filtered_sales.where(sale_status_name: status).count
     end
   end
 
