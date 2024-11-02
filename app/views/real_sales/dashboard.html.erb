@@ -10,12 +10,27 @@
           ['upcoming', '🟢'],
           ['no_date', '⚪']
         ].each do |status, icon| %>
-          <%= link_to dashboard_real_sales_path(status: status),
-              class: "group inline-flex items-center px-1 py-4 border-b-2 font-medium text-sm
-                     #{@status == status ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}" do %>
-            <span class="text-xl mr-2"><%= icon %></span>
-            <%= status.titleize %> (<%= @statistics[status.to_sym] %>)
-          <% end %>
+          <div class="flex flex-col">
+            <%= link_to dashboard_real_sales_path(status: status),
+                class: "group inline-flex items-center px-1 py-4 border-b-2 font-medium text-sm
+                       #{@status == status ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}" do %>
+              <span class="text-xl mr-2"><%= icon %></span>
+              <%= status.titleize %> (<%= @statistics[status.to_sym] %>)
+            <% end %>
+
+            <% if @status == status %>
+              <div class="mt-2 flex flex-wrap gap-2 pb-2">
+                <% @sale_statuses.each do |sale_status| %>
+                  <%= link_to dashboard_real_sales_path(status: status, sale_status: sale_status),
+                      class: "px-2 py-1 rounded-full text-xs font-medium
+                             #{params[:sale_status] == sale_status ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}" do %>
+                    <%= sale_status %>
+                    (<%= @status_counts[sale_status] %>)
+                  <% end %>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
         <% end %>
       </nav>
     </div>

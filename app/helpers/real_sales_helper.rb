@@ -1,11 +1,15 @@
 module RealSalesHelper
   def status_color(status)
-    {
-      'overdue' => 'red',
-      'today' => 'yellow',
-      'upcoming' => 'green',
-      'no_date' => 'gray'
-    }[status]
+    case status
+    when 'overdue'
+      'red'
+    when 'today'
+      'yellow'
+    when 'upcoming'
+      'green'
+    else
+      'gray'
+    end
   end
 
   def render_due_date_text(sale, status)

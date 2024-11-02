@@ -6,15 +6,49 @@ class RealSalesController < ApplicationController
   end
 
   def dashboard
+    @status = params[:status] || 'overdue'
+    
+    # Base query for the main list
+    @sales = RealSale.all
+    
+    # Base query for status counts (unfiltered)
+    @real_sales = RealSale.all
+    
+    # Apply main tab filter to @sales
+    @sales = case @status
+      when 'overdue'
+        @sales.where('next_step_date < ?', Date.current)
+      when 'today'
+        @sales.where('DATE(next_step_date) = ?', Date.current)
+      when 'upcoming'
+        @sales.where('next_step_date > ?', Date.current)
+      when 'no_date'
+        @sales.where(next_step_date: nil)
+    end
+    
+    # Apply sale status filter if present
+    if params[:sale_status].present?
+      @sales = @sales.where(sale_status_name: params[:sale_status].gsub('&#34;', "'"))
+    end
+    
+    # Calculate statistics for tabs
     @statistics = {
       overdue: RealSale.where('next_step_date < ?', Date.current).count,
       today: RealSale.where('DATE(next_step_date) = ?', Date.current).count,
       upcoming: RealSale.where('next_step_date > ?', Date.current).count,
       no_date: RealSale.where(next_step_date: nil).count
     }
-
-    @status = params[:status] || 'overdue'
-    @sales = fetch_sales_by_status(@status)
+    
+    # Get unique sale statuses for the sub-navigation
+    @sale_statuses = RealSale.distinct
+                            .pluck(:sale_status_name)
+                            .compact
+                            .map { |status| status.gsub('&#34;', "'") }
+                            
+    # Calculate counts for each sale status based on the current tab
+    @status_counts = @sale_statuses.each_with_object({}) do |status, hash|
+      hash[status] = @sales.where(sale_status_name: status).count
+    end
   end
 
   def analytics
