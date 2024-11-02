@@ -1,0 +1,28 @@
+<div class="real-sales-container">
+  <% @real_sales.each do |real_sale| %>
+    <div class="real-sale-item">
+      <div class="flex items-center group relative">
+        <span class="<%= next_step_status_color(real_sale.next_step_date) %> cursor-help">
+          <%= next_step_status_icon(real_sale.next_step_date) %>
+          <%= real_sale.next_step_date&.strftime('%Y-%m-%d') %>
+          
+          <!-- Tooltip -->
+          <div class="invisible group-hover:visible absolute z-10 w-64 p-2 mt-2 text-sm bg-gray-900 text-white rounded-lg shadow-lg">
+            <% if real_sale.next_step_date %>
+              <% days_difference = (real_sale.next_step_date.to_date - Date.current).to_i %>
+              <% if days_difference < 0 %>
+                Overdue by <%= days_difference.abs %> days
+              <% elsif days_difference == 0 %>
+                Due today
+              <% else %>
+                Due in <%= days_difference %> days
+              <% end %>
+            <% else %>
+              No next step date set
+            <% end %>
+          </div>
+        </span>
+      </div>
+    </div>
+  <% end %>
+</div>

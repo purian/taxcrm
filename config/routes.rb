@@ -18,4 +18,24 @@ Rails.application.routes.draw do
   resources :external_data, only: [:index, :create]
   get 'external_data/all_details', to: 'external_data#all_external_details', as: 'all_external_details'
   post 'sync_external_details', to: 'external_details#sync_to_crm'
+
+  resources :real_sales do
+    collection do
+      get :dashboard    # For the traffic light dashboard view
+      get :analytics   # For more detailed analytics if needed
+    end
+    
+    member do
+      get :timeline    # For individual sale timeline
+    end
+  end
+
+  # You might also want these nested routes
+  resources :sales do
+    resources :real_sales, only: [:index, :show] do
+      collection do
+        get :dashboard
+      end
+    end
+  end
 end

@@ -1,0 +1,36 @@
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
+  <!-- Overdue -->
+  <div class="bg-red-100 p-4 rounded-lg">
+    <h3 class="text-red-700 font-bold mb-2">Overdue</h3>
+    <% @real_sales.select { |rs| rs.next_step_date&.to_date.present? && rs.next_step_date.to_date < Date.current }.each do |real_sale| %>
+      <div class="mb-2">
+        <%= next_step_status_icon(real_sale.next_step_date) %>
+        <%= real_sale.next_step_date.strftime('%Y-%m-%d') %>
+        (<%= (Date.current - real_sale.next_step_date.to_date).to_i %> days overdue)
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Due Today -->
+  <div class="bg-yellow-100 p-4 rounded-lg">
+    <h3 class="text-yellow-700 font-bold mb-2">Due Today</h3>
+    <% @real_sales.select { |rs| rs.next_step_date&.to_date == Date.current }.each do |real_sale| %>
+      <div class="mb-2">
+        <%= next_step_status_icon(real_sale.next_step_date) %>
+        <%= real_sale.next_step_date.strftime('%Y-%m-%d') %>
+      </div>
+    <% end %>
+  </div>
+
+  <!-- Upcoming -->
+  <div class="bg-green-100 p-4 rounded-lg">
+    <h3 class="text-green-700 font-bold mb-2">Upcoming</h3>
+    <% @real_sales.select { |rs| rs.next_step_date&.to_date.present? && rs.next_step_date.to_date > Date.current }.each do |real_sale| %>
+      <div class="mb-2">
+        <%= next_step_status_icon(real_sale.next_step_date) %>
+        <%= real_sale.next_step_date.strftime('%Y-%m-%d') %>
+        (in <%= (real_sale.next_step_date.to_date - Date.current).to_i %> days)
+      </div>
+    <% end %>
+  </div>
+</div>
