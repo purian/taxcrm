@@ -38,9 +38,11 @@ class RealSalesController < ApplicationController
   end
 
   def show
-    respond_to do |format|
-      format.html
-      format.json { render json: @real_sale }
+    @real_sale = RealSale.find(params[:id])
+    @is_turbo_frame = turbo_frame_request?
+    
+    if @is_turbo_frame
+      render layout: false
     end
   end
 

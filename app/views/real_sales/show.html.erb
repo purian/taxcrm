@@ -1,0 +1,72 @@
+<% if @is_turbo_frame %>
+  <%= turbo_frame_tag "modal" do %>
+    <div data-controller="modal">
+      <%= render "modal" %>
+    </div>
+  <% end %>
+<% else %>
+  <div class="container mx-auto p-4">
+    <div class="bg-white rounded-lg shadow-lg p-6 max-w-2xl mx-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">
+          Sale Details - <%= @real_sale.sale_id %>
+        </h1>
+        <%= link_to "Back to Dashboard", dashboard_real_sales_path, 
+            class: "text-blue-600 hover:text-blue-800" %>
+      </div>
+
+      <dl class="divide-y divide-gray-200">
+        <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+          <dt class="text-sm font-medium text-gray-500">Sale ID</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+            <%= @real_sale.sale_id %>
+          </dd>
+        </div>
+
+        <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+          <dt class="text-sm font-medium text-gray-500">Owner</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+            <%= @real_sale.owner_name || 'No owner' %>
+          </dd>
+        </div>
+
+        <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+          <dt class="text-sm font-medium text-gray-500">Next Step Date</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+            <% if @real_sale.next_step_date %>
+              <%= @real_sale.next_step_date.strftime('%Y-%m-%d') %>
+              <span class="text-gray-500">
+                (<%= distance_of_time_in_words(@real_sale.next_step_date, Date.current) %> 
+                <%= @real_sale.next_step_date > Date.current ? 'from now' : 'ago' %>)
+              </span>
+            <% else %>
+              No date set
+            <% end %>
+          </dd>
+        </div>
+
+        <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+          <dt class="text-sm font-medium text-gray-500">Created At</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+            <%= @real_sale.created_at.strftime('%Y-%m-%d %H:%M:%S') %>
+            <span class="text-gray-500">
+              (<%= time_ago_in_words(@real_sale.created_at) %> ago)
+            </span>
+          </dd>
+        </div>
+
+        <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4">
+          <dt class="text-sm font-medium text-gray-500">Updated At</dt>
+          <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+            <%= @real_sale.updated_at.strftime('%Y-%m-%d %H:%M:%S') %>
+            <span class="text-gray-500">
+              (<%= time_ago_in_words(@real_sale.updated_at) %> ago)
+            </span>
+          </dd>
+        </div>
+
+        <!-- Add any other relevant sale details -->
+      </dl>
+    </div>
+  </div>
+<% end %> 
