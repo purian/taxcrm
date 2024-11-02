@@ -30,23 +30,20 @@ module Sales
       if data.present?
         puts "-" * 40
         begin
-          case data
+          formatted_data = case data
           when String
-            puts data
-          when Hash, Array
-            # Handle nested date objects specially
-            formatted_data = JSON.pretty_generate(data)
-            puts formatted_data
+            data
+          when Hash, Array, Numeric
+            # Use the display formatter for output
+            JSON.pretty_generate(format_for_display(data))
           when ActiveRecord::Base
-            # For ActiveRecord objects, show attributes in a readable format
-            puts JSON.pretty_generate(data.attributes)
+            JSON.pretty_generate(format_for_display(data.attributes))
           when ActiveModel::Errors
-            # For validation errors
-            puts data.full_messages.join("\n")
+            data.full_messages.join("\n")
           else
-            # Fallback for other types
-            puts data.inspect
+            data.inspect
           end
+          puts formatted_data
         rescue => e
           puts "Error formatting debug data: #{e.message}"
           puts data.inspect
@@ -55,6 +52,23 @@ module Sales
       
       puts "#{'=' * 80}\n"
     end
+
+    def format_for_display(data)
+      case data
+      when Hash
+        data.transform_values { |v| format_for_display(v) }
+      when Array
+        data.map { |v| format_for_display(v) }
+      when Float, BigDecimal
+        value = data.to_i
+        value.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse
+      when Integer
+        data.to_s.reverse.gsub(/(\d{3})(?=\d)/, '\\1,').reverse
+      else
+        data
+      end
+    end
+
     def fetch_timeline_data
       begin
         sleep(DELAY_BETWEEN_REQUESTS) # Add delay before each request
@@ -169,10 +183,21 @@ module Sales
     end
 
     def create_real_sale(timeline_item, sale_data)
-      debug_log("Creating/Updating real sale with data:", sale_data)
-
+      debug_log("Starting create_real_sale")
+      
       real_sale = @sale.real_sales.find_or_initialize_by(objectId: sale_data['objectId'])
       
+      # Convert scientific notation to integer for EstRefund
+      est_refund_value = sale_data['EstRefund']
+      est_refund_integer = case est_refund_value
+        when String
+          est_refund_value.to_i
+        when Float
+          est_refund_value.to_i
+        else
+          est_refund_value
+        end
+
       attributes = {
         # Existing fields remain unchanged
         closing_date: parse_date(sale_data.dig('ClosingDate', 'iso')),
@@ -198,7 +223,7 @@ module Sales
         discount: nil,
         discount_type: sale_data['DiscountType'],
         discount_value: sale_data['DiscountValue'],
-        est_refund: sale_data['EstRefund'],
+        est_refund: est_refund_integer,  # This will store as 48000
         invoice_issued: sale_data['InvoiceIssued'] || false,
         cpa_chat: sale_data['CPAChat'],
         all_extra_info: sale_data['AllExtraInfo'],
@@ -229,18 +254,23 @@ module Sales
         objectIdValue: timeline_item['objectIdValue']
       }
 
-      debug_log("Attributes to be assigned:", attributes)
+      debug_log("Prepared attributes for update", format_for_display(attributes))
+      
       real_sale.assign_attributes(attributes)
       
       if real_sale.changed?
-        debug_log("Changed attributes:", real_sale.changes)
+        debug_log("Changes detected", format_for_display(real_sale.changes))
         real_sale.save!
-        debug_log("Real sale saved successfully")
+        debug_log("Save successful", format_for_display(real_sale.attributes))
       else
-        debug_log("No changes detected for real sale")
+        debug_log("No changes detected")
       end
 
       real_sale
+    rescue => e
+      debug_log("Error in create_real_sale", e)
+      debug_log("Error backtrace", e.backtrace.first(5))
+      raise e
     end
 
     def parse_date(date_string)
