@@ -6,7 +6,8 @@ module Sales
     DELAY_BETWEEN_REQUESTS = 3 # seconds
     MAX_RETRIES = 3
     RETRY_DELAY = 300 
-    DEBUG = ENV['DEBUG'].present?# seconds when hitting rate limit
+    DEBUG = true
+    # DEBUG = ENV['DEBUG'].present?# seconds when hitting rate limit
 
     def initialize(sale)
       @sale = sale
