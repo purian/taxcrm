@@ -10,6 +10,7 @@ module Sales
     # DEBUG = ENV['DEBUG'].present?# seconds when hitting rate limit
 
     def initialize(sale)
+      puts "Do I in Debug? #{DEBUG}"
       @sale = sale
       @retry_count = 0
       authenticate!
