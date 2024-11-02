@@ -6,8 +6,8 @@ module Sales
     DELAY_BETWEEN_REQUESTS = 3 # seconds
     MAX_RETRIES = 3
     RETRY_DELAY = 300 
-    DEBUG = true
-    # DEBUG = ENV['DEBUG'].present?# seconds when hitting rate limit
+    # DEBUG = true
+    DEBUG = ENV['DEBUG'].present?# seconds when hitting rate limit
 
     def initialize(sale)
       puts "Do I in Debug? #{DEBUG}"
@@ -73,23 +73,45 @@ module Sales
 
     def fetch_timeline_data
       begin
+        debug_log("Starting timeline data fetch for sale #{@sale.id}")
+        debug_log("Current retry count: #{@retry_count}")
+        
         sleep(DELAY_BETWEEN_REQUESTS) # Add delay before each request
+        debug_log("Making API request to /parse/classes/_Timeline", {
+          headers: auth_headers,
+          body: timeline_request_body
+        })
+        
         response = self.class.post('/parse/classes/_Timeline',
           headers: auth_headers,
           body: timeline_request_body.to_json
         )
         
+        debug_log("Received response", {
+          code: response.code,
+          body: response.parsed_response
+        })
+        
         if response.code == 429 # Too Many Requests
+          debug_log("Rate limit exceeded, attempting retry")
           handle_rate_limit
         else
+          debug_log("Processing successful response")
           handle_response(response)
         end
       rescue => e
+        debug_log("Error fetching timeline data", {
+          error: e.message,
+          backtrace: e.backtrace&.first(5)
+        })
+        
         if @retry_count < MAX_RETRIES
           @retry_count += 1
+          debug_log("Retrying request (attempt #{@retry_count} of #{MAX_RETRIES})")
           sleep(RETRY_DELAY)
           retry
         else
+          debug_log("Max retries exceeded, raising error")
           raise e
         end
       end
