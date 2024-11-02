@@ -30,29 +30,41 @@
                   <%= attr_name.titleize %>
                 </dt>
                 <dd class="text-base text-gray-900">
-                  <% if attr_name == 'cpa_chat' && value.present? %>
-                    <div class="overflow-x-auto shadow-sm rounded-lg border-2 border-gray-300">
-                      <table class="min-w-full divide-y-2 divide-gray-300 border-collapse">
+                  <% if attr_name == 'cpa_chat' || attr_name == 'lawyer_comment' && value.present? %>
+                    <div class="overflow-x-auto shadow-sm rounded-lg">
+                      <table class="min-w-full border-collapse [border:1.5px_solid_#000000]">
                         <thead class="bg-gray-50">
-                          <tr class="border-b-2 border-gray-300">
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-x-2 border-gray-300">תאריך ושעה</th>
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-x-2 border-gray-300">שם</th>
-                            <th scope="col" class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider border-x-2 border-gray-300">הודעה</th>
+                          <tr>
+                            <th scope="col" class="px-8 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider [border:1.5px_solid_#000000] min-w-[180px]">תאריך ושעה</th>
+                            <th scope="col" class="px-8 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider [border:1.5px_solid_#000000] min-w-[120px]">שם</th>
+                            <th scope="col" class="px-8 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider [border:1.5px_solid_#000000]">הודעה</th>
                           </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-300">
-                          <% messages = value.scan(/(\S+)\s+(\d{1,2}\.\d{1,2}\.\d{4},\s+\d{1,2}:\d{2}:\d{2}):\s+(.+?)(?=\s*\S+\s+\d{1,2}\.\d{1,2}\.\d{4}|$)/m) %>
+                        <tbody class="bg-white">
+                          <% 
+                            # Clean up HTML entities and format the text
+                            cleaned_value = value.gsub(/\d+&#58;/, '')
+                            
+                            # Use appropriate regex based on the field
+                            pattern = if attr_name == 'cpa_chat'
+                              /(\S+)\s+(\d{1,2}\.\d{1,2}\.\d{4},\s+\d{1,2}:\d{2}:\d{2}):\s+(.+?)(?=\s*\S+\s+\d{1,2}\.\d{1,2}\.\d{4}|$)/m
+                            else
+                              /(\S+)\s+(\d{1,2}\.\d{1,2}\.\d{4},)\s+(.+?)(?=\r\n|\z)/m
+                            end
+                            
+                            messages = cleaned_value.scan(pattern)
+                          %>
                           <% messages.each do |name, datetime, content| %>
                             <tr class="hover:bg-gray-50 transition-colors duration-200">
-                              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-right border-x-2 border-gray-300">
+                              <td class="px-8 py-4 whitespace-nowrap text-sm text-gray-500 text-right [border:1.5px_solid_#000000]">
                                 <%= datetime %>
                               </td>
-                              <td class="px-6 py-4 text-sm text-gray-900 text-right border-x-2 border-gray-300">
+                              <td class="px-8 py-4 text-sm text-gray-900 text-right [border:1.5px_solid_#000000]">
                                 <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
                                   <%= name %>
                                 </span>
                               </td>
-                              <td class="px-6 py-4 text-sm text-gray-900 text-right border-x-2 border-gray-300">
+                              <td class="px-8 py-4 text-sm text-gray-900 text-right [border:1.5px_solid_#000000]">
                                 <%= content.strip %>
                               </td>
                             </tr>
