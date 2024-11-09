@@ -11,16 +11,20 @@ class RealSalesController < ApplicationController
     # Base query for the main list
     @sales = RealSale.all
     
-    # Apply main tab filter (store in a separate variable for count calculations)
+    # Apply main tab filter with sorting
     @tab_filtered_sales = case @status
       when 'overdue'
         @sales.where('next_step_date < ?', Date.current)
+              .order(next_step_date: :desc, updated_at: :desc)
       when 'today'
         @sales.where('DATE(next_step_date) = ?', Date.current)
+              .order(next_step_date: :desc, updated_at: :desc)
       when 'upcoming'
         @sales.where('next_step_date > ?', Date.current)
+              .order(next_step_date: :desc, updated_at: :desc)
       when 'no_date'
         @sales.where(next_step_date: nil)
+              .order(updated_at: :desc)
     end
     
     # Set @sales to include both tab and status filters
