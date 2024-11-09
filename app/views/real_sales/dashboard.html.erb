@@ -66,6 +66,17 @@
               Created: <%= time_ago_in_words(sale.created_at) %> ago
             </div>
           <% end %>
+
+          <div class="text-sm text-gray-500 mt-2">
+            <% puts "sale.sale_id: #{sale.sale_id}" %>            
+            <% puts "sale.objectId: #{sale.sale.objectId}" %>            
+            <% accounting_headers = AccountingHeader.where(object_id: sale.sale.objectId) %>
+            <% if accounting_headers.any? %>
+              Documents: <%= accounting_headers.pluck(:doc_type_name).compact.join(', ') %>
+            <% else %>
+              Documents: 0
+            <% end %>
+          </div>
         </div>
       <% end %>
     <% else %>
