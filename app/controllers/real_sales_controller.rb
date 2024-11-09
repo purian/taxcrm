@@ -26,9 +26,9 @@ class RealSalesController < ApplicationController
     # Set @sales to include both tab and status filters
     @sales = @tab_filtered_sales
     
-    # Apply sale status filter if present
+    # Apply cap status filter if present
     if params[:sale_status].present?
-      @sales = @sales.where(sale_status_name: params[:sale_status].gsub('&#34;', "'"))
+      @sales = @sales.where(cap_status_name: params[:sale_status].gsub('&#34;', "'"))
     end
     
     # Calculate statistics for main tabs
@@ -39,15 +39,15 @@ class RealSalesController < ApplicationController
       no_date: RealSale.where(next_step_date: nil).count
     }
     
-    # Get unique sale statuses
+    # Get unique cap statuses
     @sale_statuses = RealSale.distinct
-                            .pluck(:sale_status_name)
+                            .pluck(:cap_status_name)
                             .compact
                             .map { |status| status.gsub('&#34;', "'") }
                             
-    # Calculate counts for each sale status based on the current tab only
+    # Calculate counts for each cap status based on the current tab only
     @status_counts = @sale_statuses.each_with_object({}) do |status, hash|
-      hash[status] = @tab_filtered_sales.where(sale_status_name: status).count
+      hash[status] = @tab_filtered_sales.where(cap_status_name: status).count
     end
   end
 
