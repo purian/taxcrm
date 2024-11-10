@@ -4,19 +4,20 @@ namespace :sales do
     batch_size = 500
     delay_between_batches = 120 # 5 minutes
     counter = 1
-    total_missing_sales = Sale.where.missing(:real_sales).count
-
-    Sale.where.missing(:real_sales).find_each(batch_size: batch_size) do |sale|
+    total_missing_sales = Sale.joins(:real_sales).where(real_sales: { updated_at: ..1.day.ago.end_of_day }).count
+    # total_missing_sales = Sale.where.missing(:real_sales).count
+    # Sale.where.missing(:real_sales).find_each(batch_size: batch_size) do |sale|
+    Sale.joins(:real_sales).where(real_sales: { updated_at: ..1.day.ago.end_of_day }).find_each(batch_size: batch_size) do |sale|
       begin  
         puts "Total process sales out of missing sales: #{counter} / #{total_missing_sales}"
-        if sale.real_sales.empty?
+        # if sale.real_sales.empty?
           puts "Processing Sale ID: #{sale.id}"
           puts "Real Sales: #{sale.real_sales.count}"
           sale.process_timeline 
           sleep(0.75)
           counter += 1
           puts "Processed timeline for Sale ID: #{sale.id}"
-        end
+        # end
       rescue => e
         puts "Error processing Sale ID: #{sale.id} - #{e.message}"
       end
@@ -34,13 +35,21 @@ namespace :sales do
     
     sales = case date_type
     when 'today'
-      Sale.joins(:real_sales).where(real_sales: { next_step_date: Date.today })
+      Sale.joins(:real_sales)
+          .where(real_sales: { next_step_date: Date.today })
+          .where(real_sales: { updated_at: ..2.hours.ago })
     when 'upcoming'
-      Sale.joins(:real_sales).where('real_sales.next_step_date >= ?', Date.today)
+      Sale.joins(:real_sales)
+          .where('real_sales.next_step_date >= ?', Date.today)
+          .where(real_sales: { updated_at: ..2.hours.ago })
     when 'past'
-      Sale.joins(:real_sales).where('real_sales.next_step_date < ?', Date.today)
+      Sale.joins(:real_sales)
+          .where('real_sales.next_step_date < ?', Date.today)
+          .where(real_sales: { updated_at: ..2.hours.ago })
     when 'week'
-      Sale.joins(:real_sales).where(real_sales: { next_step_date: Date.today.beginning_of_week..Date.today.end_of_week })
+      Sale.joins(:real_sales)
+          .where(real_sales: { next_step_date: Date.today.beginning_of_week..Date.today.end_of_week })
+          .where(real_sales: { updated_at: ..2.hours.ago })
     else
       puts "Invalid date type. Use 'today', 'upcoming', 'past', or 'week'"
       return
