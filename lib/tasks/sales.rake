@@ -29,6 +29,38 @@ namespace :sales do
     end
   end
 
+  task process_overdue_collection_sales: :environment do
+    batch_size = 500
+    delay_between_batches = 120 # 5 minutes
+    counter = 1
+    total_overdue_sales = Sale.joins(:real_sales)
+                             .where('real_sales.next_step_date < ?', Date.today)
+                             .where(real_sales: { cap_status_name: 'בגבייה' })
+                             .count
+
+    Sale.joins(:real_sales)
+        .where('real_sales.next_step_date < ?', Date.today)
+        .where(real_sales: { cap_status_name: 'בגבייה' })
+        .find_each(batch_size: batch_size) do |sale|
+      begin  
+        puts "Total process overdue collection sales: #{counter} / #{total_overdue_sales}"
+        puts "Processing Sale ID: #{sale.id}"
+        puts "Real Sales: #{sale.real_sales.count}"
+        sale.process_timeline 
+        sleep(0.75)
+        counter += 1
+        puts "Processed timeline for Sale ID: #{sale.id}"
+      rescue => e
+        puts "Error processing Sale ID: #{sale.id} - #{e.message}"
+      end
+      
+      if (sale.id % batch_size == 0 && counter % 500 == 0)
+        puts "Sleeping for #{delay_between_batches} seconds between batches..."
+        sleep(delay_between_batches)
+      end
+    end
+  end
+
   desc "Update next step dates for sales"
   task :update_next_step_dates, [:date_type] => :environment do |t, args|
     date_type = args[:date_type] || 'today'
