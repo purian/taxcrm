@@ -262,7 +262,7 @@ class Sale < ApplicationRecord
 
   class << self
     def request_headers
-      HEADERS.merge('X-Parse-Session-Token' => AuthenticationService.fetch_token('benamram119@walla.com', 'Gg198666'))
+      HEADERS.merge('X-Parse-Session-Token' => AuthenticationService.fetch_token('benamram119@walla.com', 'Guy@1986'))
     end
 
     def sale_detail_request_body(object_id)
@@ -275,7 +275,7 @@ class Sale < ApplicationRecord
         _JavaScriptKey: "6ee213f7b4e169caa819715ee046cded",
         _ClientVersion: "js1.10.1",
         _InstallationId: "9f63e5c7-8d7c-fa3b-24af-f910a1560651",
-        _SessionToken: AuthenticationService.fetch_token('benamram119@walla.com', 'Gg198666')
+        _SessionToken: AuthenticationService.fetch_token('benamram119@walla.com', 'Guy@1986')
       }
     end
 
@@ -290,7 +290,7 @@ class Sale < ApplicationRecord
         _JavaScriptKey: "6ee213f7b4e169caa819715ee046cded",
         _ClientVersion: "js1.10.1",
         _InstallationId: "9f63e5c7-8d7c-fa3b-24af-f910a1560651",
-        _SessionToken: AuthenticationService.fetch_token('benamram119@walla.com', 'Gg198666')
+        _SessionToken: AuthenticationService.fetch_token('benamram119@walla.com', 'Guy@1986')
       }
     end
 

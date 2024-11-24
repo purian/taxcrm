@@ -3,7 +3,7 @@ module Sales
     include HTTParty
     base_uri 'https://api-4.mbapps.co.il'
 
-    DELAY_BETWEEN_REQUESTS = 3 # seconds
+    DELAY_BETWEEN_REQUESTS = 1.5 # seconds
     MAX_RETRIES = 3
     RETRY_DELAY = 300 
     # DEBUG = true
@@ -129,7 +129,7 @@ module Sales
 
     def authenticate!
       email = 'benamram119@walla.com'
-      password = 'Gg198666'
+      password = 'Guy@1986'
       @token = AuthenticationService.fetch_token(email, password)
     end
 

@@ -23,7 +23,7 @@ class FetchLeadsDataService
 
   def initialize
     email = 'benamram119@walla.com'
-    password = 'Gg198666'
+    password = 'Guy@1986'
     @token = AuthenticationService.fetch_token(email, password)
   end
 
