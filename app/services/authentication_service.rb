@@ -53,6 +53,7 @@ class AuthenticationService
           sleep 60
         end
         retries += 1
+        puts "Retrying authentication... number of retries: #{retries}"
         retry
       else
         raise "Failed to fetch authentication token after 3 retries"
