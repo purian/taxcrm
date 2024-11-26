@@ -19,22 +19,51 @@ class AuthenticationService
     'upgrade-insecure-requests' => '1',
     'user-agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
   }
-
   def self.fetch_token(email, password)
-    public_key_data = PublicKeyService.fetch_public_key
-    encrypted_password = EncryptionService.encrypt_password(password, public_key_data[:public_key])
-    response = HTTParty.post(LOGIN_URL, headers: HEADERS, body: {
-      username: email,
-      encrypt_password: encrypted_password,
-      encrypt__id: public_key_data[:id],
-      isAdmin: true,
-      applicationId: '5a8ebcecca2341001a722188',
-      requestFromDiffDomain: 1
-    }.to_query)
-    
-    document = Nokogiri::HTML(response.body)
-    script_content = document.at('script:contains("Simbla.User.become")').text
-    token = script_content.match(/Simbla\.User\.become\("([^"]+)"\)/)[1]
-    token
+    retries = 0
+    begin
+      public_key_data = PublicKeyService.fetch_public_key
+      encrypted_password = EncryptionService.encrypt_password(password, public_key_data[:public_key])
+      response = HTTParty.post(LOGIN_URL, headers: HEADERS, body: {
+        username: email,
+        encrypt_password: encrypted_password,
+        encrypt__id: public_key_data[:id],
+        isAdmin: true,
+        applicationId: '5a8ebcecca2341001a722188',
+        requestFromDiffDomain: 1
+      }.to_query)
+      
+      document = Nokogiri::HTML(response.body)
+      script_element = document.at('script:contains("Simbla.User.become")')
+      
+      if script_element.nil?
+        puts "Failed to find authentication token. Retrying in 30 minutes..."
+        30.times do |i|
+          minutes_left = 30 - i
+          puts "#{minutes_left} minutes remaining until next retry..."
+          sleep 60
+        end
+        retries += 1
+        retry
+      end
+
+      script_content = script_element.text
+      token = script_content.match(/Simbla\.User\.become\("([^"]+)"\)/)[1]
+      token
+    rescue StandardError => e
+      puts "Error occurred: #{e.message}"
+      if retries < 3
+        puts "Retrying in 30 minutes..."
+        30.times do |i|
+          minutes_left = 30 - i
+          puts "#{minutes_left} minutes remaining until next retry..."
+          sleep 60
+        end
+        retries += 1
+        retry
+      else
+        raise "Failed to fetch authentication token after 3 retries"
+      end
+    end
   end
 end
