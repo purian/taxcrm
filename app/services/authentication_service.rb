@@ -37,14 +37,7 @@ class AuthenticationService
       script_element = document.at('script:contains("Simbla.User.become")')
       
       if script_element.nil?
-        puts "Failed to find authentication token. Retrying in 30 minutes..."
-        30.times do |i|
-          minutes_left = 30 - i
-          puts "#{minutes_left} minutes remaining until next retry..."
-          sleep 60
-        end
-        retries += 1
-        retry
+        raise "Failed to find authentication token"
       end
 
       script_content = script_element.text
