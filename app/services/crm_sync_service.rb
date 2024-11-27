@@ -5,7 +5,7 @@ require 'json'
 class CrmSyncService
   def initialize(session_token = nil)
     email = 'benamram119@walla.com'
-    password = 'Guy@1986'
+    password = 'Guy1986!'
     @token = AuthenticationService.fetch_token(email, password)    
   end
 

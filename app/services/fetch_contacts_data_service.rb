@@ -22,7 +22,7 @@ class FetchContactsDataService
   def initialize
     @last_fetched_at = Contact.maximum(:updated_at) || Time.at(0)
     email = 'benamram119@walla.com'
-    password = 'Guy@1986'
+    password = 'Guy1986!'
     @token = AuthenticationService.fetch_token(email, password)
   end
 
