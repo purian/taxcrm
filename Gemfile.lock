@@ -102,6 +102,7 @@ GEM
     connection_pool (2.4.1)
     crass (1.0.6)
     csv (3.3.0)
+    dalli (3.2.8)
     date (3.3.4)
     debug (1.9.2)
       irb (~> 1.10)
@@ -282,6 +283,7 @@ DEPENDENCIES
   capybara
   chart-js-rails
   chartkick
+  dalli
   debug
   error_highlight (>= 0.4.0)
   font-awesome-sass (~> 5.15.1)

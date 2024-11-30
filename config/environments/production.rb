@@ -65,7 +65,16 @@ Rails.application.configure do
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
 
   # Use a different cache store in production.
-  config.cache_store = :mem_cache_store
+  config.cache_store = :mem_cache_store,
+    (ENV["MEMCACHIER_AMBER_SERVERS"] || "localhost:11211").split(","),
+    {
+      username: ENV["MEMCACHIER_AMBER_USERNAME"],
+      password: ENV["MEMCACHIER_AMBER_PASSWORD"],
+      failover: true,
+      socket_timeout: 1.5,
+      socket_failure_delay: 0.2,
+      down_retry_delay: 60
+    }
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
   # config.active_job.queue_adapter = :resque
