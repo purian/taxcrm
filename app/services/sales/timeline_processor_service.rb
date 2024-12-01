@@ -88,8 +88,7 @@ module Sales
         )
         if response.code == 400
           Rails.cache.delete(:token)
-          authenticate!
-          retry
+          authenticate!          
         end
         debug_log("Received response", {
           code: response.code,
