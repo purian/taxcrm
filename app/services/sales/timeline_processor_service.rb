@@ -86,7 +86,11 @@ module Sales
           headers: auth_headers,
           body: timeline_request_body.to_json
         )
-        
+        if response.code == 400
+          Rails.cache.delete(:token)
+          authenticate!
+          retry
+        end
         debug_log("Received response", {
           code: response.code,
           body: response.parsed_response
