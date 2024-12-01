@@ -20,10 +20,19 @@ class AuthenticationService
     'user-agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
   }
   def self.fetch_token(email, password)
+    puts "Fethcing token"
+    token = Rails.cache.read(:token)
+    unless token.nil?
+      puts "Token found in cache"
+      return token
+    end
+    puts "Authenticating... #{Time.now}"
     retries = 0
     begin
       public_key_data = PublicKeyService.fetch_public_key
       encrypted_password = EncryptionService.encrypt_password(password, public_key_data[:public_key])
+      # puts "Encrypted password: #{encrypted_password}"
+      # puts "Public key ID: #{public_key_data}"
       response = HTTParty.post(LOGIN_URL, headers: HEADERS, body: {
         username: email,
         encrypt_password: encrypted_password,
@@ -33,6 +42,7 @@ class AuthenticationService
         requestFromDiffDomain: 1
       }.to_query)
       
+      # puts "Response: #{response.body}"
       document = Nokogiri::HTML(response.body)
       script_element = document.at('script:contains("Simbla.User.become")')
       
@@ -42,6 +52,7 @@ class AuthenticationService
 
       script_content = script_element.text
       token = script_content.match(/Simbla\.User\.become\("([^"]+)"\)/)[1]
+      Rails.cache.write(:token, token)
       token
     rescue StandardError => e
       puts "Error occurred: #{e.message}"
