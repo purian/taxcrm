@@ -126,7 +126,7 @@ module Sales
         sleep(RETRY_DELAY)
         fetch_timeline_data # Retry the request
       else
-        raise ApiError, "Rate limit exceeded after #{MAX_RETRIES} retries"
+        raise StandardError, "Rate limit exceeded after #{MAX_RETRIES} retries"
       end
     end
 
@@ -197,7 +197,7 @@ module Sales
       return JSON.parse(response.body) if response.success?
 
       Rails.logger.error("Timeline API Error: #{response.code} - #{response.body}")
-      raise ApiError, "API request failed with status #{response.code}: #{response.body}"
+      raise StandardError, "API request failed with status #{response.code}: #{response.body}"
     end
 
     def process_sales_from_timeline(timeline_data)
