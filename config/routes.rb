@@ -31,4 +31,10 @@ Rails.application.routes.draw do
       end
     end
   end
+
+  resources :client_external_details, only: [:index, :new, :create] do
+    collection do
+      post :sync_all
+    end
+  end
 end

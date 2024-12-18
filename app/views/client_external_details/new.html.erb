@@ -1,0 +1,13 @@
+<h1>Upload CSV File</h1>
+
+<%= form_tag client_external_details_path, multipart: true do %>
+  <div class="field">
+    <%= label_tag :file, 'Select CSV File' %>
+    <%= file_field_tag :file, accept: 'text/csv' %>
+  </div>
+
+  <div class="actions">
+    <%= submit_tag 'Upload', class: 'button' %>
+    <%= link_to 'Back', client_external_details_path, class: 'button' %>
+  </div>
+<% end %> 

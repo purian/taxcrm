@@ -1,0 +1,30 @@
+<h1>Client External Details</h1>
+
+<div class="actions">
+  <%= link_to 'Upload New CSV', new_client_external_detail_path, class: 'button' %>
+  <%= button_to 'Sync All', sync_all_client_external_details_path, method: :post, class: 'button' %>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Client ID</th>
+      <th>Client Number</th>
+      <th>Client Name</th>
+      <th>Phone Number</th>
+      <th>Sync Status</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @client_external_details.each do |detail| %>
+      <tr>
+        <td><%= detail.client_id %></td>
+        <td><%= detail.client_number %></td>
+        <td><%= detail.client_name %></td>
+        <td><%= detail.client_phone_number %></td>
+        <td><%= detail.sync_at ? detail.sync_at.strftime("%Y-%m-%d %H:%M:%S") : 'Not synced' %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table> 

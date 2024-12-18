@@ -59,6 +59,13 @@ GEM
       activemodel (= 7.1.3.3)
       activesupport (= 7.1.3.3)
       timeout (>= 0.4.0)
+    activerecord-session_store (2.1.0)
+      actionpack (>= 6.1)
+      activerecord (>= 6.1)
+      cgi (>= 0.3.6)
+      multi_json (~> 1.11, >= 1.11.2)
+      rack (>= 2.0.8, < 4)
+      railties (>= 6.1)
     activestorage (7.1.3.3)
       actionpack (= 7.1.3.3)
       activejob (= 7.1.3.3)
@@ -95,6 +102,7 @@ GEM
       rack-test (>= 0.6.3)
       regexp_parser (>= 1.5, < 3.0)
       xpath (~> 3.2)
+    cgi (0.4.1)
     chart-js-rails (0.1.7)
       railties (> 3.1)
     chartkick (5.0.7)
@@ -154,6 +162,7 @@ GEM
     mini_mime (1.1.5)
     minitest (5.23.1)
     msgpack (1.7.2)
+    multi_json (1.15.0)
     multi_xml (0.7.1)
       bigdecimal (~> 3.1)
     mutex_m (0.2.0)
@@ -278,11 +287,13 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  activerecord-session_store
   annotate
   bootsnap
   capybara
   chart-js-rails
   chartkick
+  csv
   dalli
   debug
   error_highlight (>= 0.4.0)

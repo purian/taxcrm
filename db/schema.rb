@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_31_231442) do
+ActiveRecord::Schema[7.1].define(version: 2024_12_18_155152) do
   create_table "accounting_headers", force: :cascade do |t|
     t.string "object_id", null: false
     t.string "object_type", null: false
@@ -30,6 +30,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_31_231442) do
     t.datetime "updated_at", null: false
     t.index ["external_object_id"], name: "index_accounting_headers_on_external_object_id", unique: true
     t.index ["object_type", "object_id"], name: "index_accounting_headers_on_object_type_and_object_id"
+  end
+
+  create_table "client_external_details", force: :cascade do |t|
+    t.string "client_id"
+    t.string "client_number"
+    t.string "client_name"
+    t.string "client_phone_number"
+    t.datetime "sync_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "clients", force: :cascade do |t|
@@ -446,6 +456,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_31_231442) do
     t.index ["owner_id"], name: "index_sales_on_owner_id"
     t.index ["pakid_shoma_id"], name: "index_sales_on_pakid_shoma_id"
     t.index ["sale_status_id"], name: "index_sales_on_sale_status_id"
+  end
+
+  create_table "sessions", force: :cascade do |t|
+    t.string "session_id", null: false
+    t.text "data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["session_id"], name: "index_sessions_on_session_id", unique: true
+    t.index ["updated_at"], name: "index_sessions_on_updated_at"
   end
 
   create_table "time_lines", force: :cascade do |t|

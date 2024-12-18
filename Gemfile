@@ -84,3 +84,7 @@ gem 'font-awesome-sass', '~> 5.15.1'
 
 gem 'dalli'
 
+gem 'csv'
+
+gem 'activerecord-session_store'
+
