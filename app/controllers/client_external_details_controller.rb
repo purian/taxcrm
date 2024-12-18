@@ -37,7 +37,7 @@ class ClientExternalDetailsController < ApplicationController
           end
         end
 
-        if failed_rows.any?
+        if failed_rows.any?          
           redirect_to client_external_details_path, 
             alert: "Imported #{success_count} records. Failed to import #{failed_rows.size} records: #{failed_rows.join('; ')}"
         else
@@ -57,9 +57,116 @@ class ClientExternalDetailsController < ApplicationController
   def sync_all
     unsync_records = ClientExternalDetail.where(sync_at: nil)
     
-    # This is where you'll add your sync logic later
+    @email = 'benamram119@walla.com'
+    @password = 'Guy1986!'
+    auth_token = AuthenticationService.fetch_token(@email, @password)
+    # Get authentication token from service      
+    results = {
+      saved: 0,
+      skipped: 0,
+      already_updated: 0,
+      errors: 0
+    }
+
+    unsync_records.find_each do |record|
+      begin
+        object_id, lead_status = fetch_object_id_and_status(record.client_number, auth_token)
+
+        if object_id.nil? || lead_status.nil?
+          results[:errors] += 1
+          next
+        end
+
+        if lead_status != "חסר נייד"
+          results[:already_updated] += 1
+          next
+        end
+
+        existing_comment = extract_comment(object_id, auth_token)
+        
+        if update_phone_number(object_id, record.client_phone_number, existing_comment, auth_token, record.data_owner)
+          results[:saved] += 1
+          record.update(sync_at: Time.current)
+        else
+          results[:errors] += 1
+        end
+      rescue => e
+        results[:errors] += 1
+        Rails.logger.error("Sync error for client #{record.client_number}: #{e.message}")
+      end
+    end
+
+    redirect_to client_external_details_path, 
+      notice: "Sync completed: #{results[:saved]} updated, #{results[:skipped]} skipped, " \
+              "#{results[:already_updated]} already updated, #{results[:errors]} errors"
+  end
+
+  private
+
+  def fetch_object_id_and_status(client_number, session_token)
+    uri = URI('https://api-1.mbapps.co.il/parse/classes/Accounts')
+    response = make_api_request(uri, {
+      where: { Number: client_number.to_i, IsAccount: false },
+      keys: "objectId,LeadStatusId.Name",
+      limit: 1
+    }, session_token, method: :get)
+
+    return nil, nil unless response.is_a?(Net::HTTPSuccess)
     
-    unsync_records.update_all(sync_at: Time.current)
-    redirect_to client_external_details_path, notice: 'All records have been synchronized.'
+    data = JSON.parse(response.body)
+    result = data.dig("results", 0)
+    [result["objectId"], result.dig("LeadStatusId", "Name")]
+  end
+
+  def extract_comment(object_id, session_token)
+    uri = URI('https://api-1.mbapps.co.il/parse/classes/Accounts')
+    response = make_api_request(uri, {
+      where: { objectId: object_id },
+      keys: "Comment",
+      limit: 1
+    }, session_token, method: :get)
+
+    return nil unless response.is_a?(Net::HTTPSuccess)
+    JSON.parse(response.body).dig("results", 0, "Comment")
+  end
+
+  def update_phone_number(object_id, new_phone_number, existing_comment, session_token, data_owner)
+    uri = URI("https://api-1.mbapps.co.il/parse/classes/Accounts/#{object_id}")
+    updated_comment = existing_comment.to_s.strip.empty? ? "נייד דרך #{data_owner}" : "#{existing_comment} | נייד דרך #{data_owner}"
+
+    response = make_api_request(uri, {
+      PhoneNumber: new_phone_number,
+      Comment: updated_comment,
+      LeadStatusId: { 
+        __type: "Pointer", 
+        className: "LeadStatuses", 
+        objectId: "3S6OxTzAhJ" 
+      }
+    }, session_token, method: :put)
+
+    response.is_a?(Net::HTTPSuccess)
+  end
+
+  def make_api_request(uri, body_params, session_token, method: :post)
+    headers = {
+      'accept' => '*/*',
+      'content-type' => 'text/plain',
+      'user-agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
+    }
+
+    body = body_params.merge({
+      _method: method.to_s.upcase,
+      _ApplicationId: "aaaaaaae3aac375841ec08b905439c3fa4316c3d",
+      _JavaScriptKey: "6ee213f7b4e169caa819715ee046cded",
+      _ClientVersion: "js1.10.1",
+      _SessionToken: session_token
+    }).to_json
+
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+
+    request = Net::HTTP::Post.new(uri.path, headers)
+    request.body = body
+    http.request(request)
   end
 end 
