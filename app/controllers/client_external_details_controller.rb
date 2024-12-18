@@ -28,7 +28,8 @@ class ClientExternalDetailsController < ApplicationController
               client_id: row['client_id'],
               client_number: row['client_number'],
               client_name: row['client_name'],
-              client_phone_number: row['client_phone_number']
+              client_phone_number: row['client_phone_number'],
+              data_owner: params[:data_owner]
             )
             success_count += 1
           rescue => e

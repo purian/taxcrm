@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_12_18_155152) do
+ActiveRecord::Schema[7.1].define(version: 2024_12_18_162542) do
   create_table "accounting_headers", force: :cascade do |t|
     t.string "object_id", null: false
     t.string "object_type", null: false
@@ -40,6 +40,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_18_155152) do
     t.datetime "sync_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "data_owner"
   end
 
   create_table "clients", force: :cascade do |t|

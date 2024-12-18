@@ -1,13 +1,26 @@
-<h1>Upload CSV File</h1>
+<h1>Import Client External Details</h1>
 
-<%= form_tag client_external_details_path, multipart: true do %>
-  <div class="field">
-    <%= label_tag :file, 'Select CSV File' %>
-    <%= file_field_tag :file, accept: 'text/csv' %>
+<div class="upload-instructions">
+  <h3>CSV File Requirements:</h3>
+  <p>Your CSV file must include the following columns:</p>
+  <ul>
+    <li>client_id</li>
+    <li>client_number</li>
+    <li>client_name</li>
+    <li>client_phone_number</li>
+  </ul>
+</div>
+
+<%= form_tag client_external_details_path, multipart: true, data: { turbo: false } do %>
+  <div class="form-group">
+    <%= label_tag :data_owner, "Data Owner" %>
+    <%= text_field_tag :data_owner, nil, required: true, class: 'form-control' %>
   </div>
 
-  <div class="actions">
-    <%= submit_tag 'Upload', class: 'button' %>
-    <%= link_to 'Back', client_external_details_path, class: 'button' %>
+  <div class="form-group">
+    <%= label_tag :file, "CSV File" %>
+    <%= file_field_tag :file, accept: 'text/csv', required: true, class: 'form-control' %>
   </div>
+
+  <%= submit_tag "Import CSV", class: 'btn btn-primary' %>
 <% end %> 

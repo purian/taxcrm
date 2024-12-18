@@ -10,10 +10,12 @@
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
 #  client_id           :string
+#  data_owner          :string
 #
 class ClientExternalDetail < ApplicationRecord
   validates :client_id, presence: true
   validates :client_number, presence: true
   validates :client_name, presence: true
   validates :client_phone_number, presence: true
+  validates :data_owner, presence: true
 end 
