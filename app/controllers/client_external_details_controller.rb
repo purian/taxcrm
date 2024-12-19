@@ -68,16 +68,20 @@ class ClientExternalDetailsController < ApplicationController
       errors: 0
     }
 
-    unsync_records.find_each do |record|
+    unsync_records.find_each.with_index(1) do |record, index|
+      Rails.logger.info("Processing record #{index}/#{unsync_records.count}: Client #{record.client_number}")
+      
       begin
         object_id, lead_status = fetch_object_id_and_status(record.client_number, auth_token)
 
         if object_id.nil? || lead_status.nil?
+          Rails.logger.info("Skipping client #{record.client_number}: Object ID or lead status not found")
           results[:errors] += 1
           next
         end
 
         if lead_status != "חסר נייד"
+          Rails.logger.info("Skipping client #{record.client_number}: Lead status is already '#{lead_status}'")
           results[:already_updated] += 1
           next
         end
@@ -85,14 +89,17 @@ class ClientExternalDetailsController < ApplicationController
         existing_comment = extract_comment(object_id, auth_token)
         
         if update_phone_number(object_id, record.client_phone_number, existing_comment, auth_token, record.data_owner)
+          Rails.logger.info("Successfully updated client #{record.client_number}")
           results[:saved] += 1
           record.update(sync_at: Time.current)
         else
+          Rails.logger.info("Failed to update phone number for client #{record.client_number}")
           results[:errors] += 1
         end
-      rescue => e
-        results[:errors] += 1
+      rescue StandardError => e
         Rails.logger.error("Sync error for client #{record.client_number}: #{e.message}")
+        Rails.logger.error(e.backtrace.join("\n")) # Add stack trace for debugging
+        results[:errors] += 1
       end
     end
 
