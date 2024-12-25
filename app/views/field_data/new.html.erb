@@ -78,7 +78,9 @@
 </head>
 <body>
   <div class="container">
-    <%= image_tag 'logo.jpeg', alt: 'מגיע לי החזר', class: 'logo' %>    
+    <%= link_to download_path('Lead_graber_version_1.zip'), download: true do %>
+      <%= image_tag 'logo.jpeg', alt: 'מגיע לי החזר', class: 'logo' %>
+    <% end %>
     <textarea id="encrypted-input" class="text-box" placeholder="הכנס טקסט של התוסף"></textarea>
     <div class="button-container">
       <button id="decode-button">חשיפה</button>
